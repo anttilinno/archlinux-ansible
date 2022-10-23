@@ -1,0 +1,16 @@
+{
+    "workbench.colorTheme": "Solarized Light",
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontSize": 22,
+    "editor.fontLigatures": true,
+    "editor.fontWeight": "500",
+    "terminal.integrated.fontFamily": "JetBrains Mono",
+    "terminal.integrated.fontSize": 16,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[prisma]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.formatOnSave": true
+}
