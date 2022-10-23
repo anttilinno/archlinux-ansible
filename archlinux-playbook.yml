@@ -1,0 +1,32 @@
+---
+  - name: "Setup ArchLinux developing environment"
+    become: yes
+    hosts: archlinux
+
+    tasks:
+    - name: Install base packages
+      community.general.pacman:
+        name:
+          - neovim
+          - git
+          - base-devel
+          - zsh
+          - xorg-server
+          - xorg-xinit
+          - xf86-video-vmware
+          - i3-gaps
+          - i3status
+          - xfce4-terminal
+          - rofi
+          - starship
+          - noto-fonts-emoji
+          - xsel
+          - httpie
+          - ttf-jetbrains-mono
+          - ripgrep
+          - bat
+          - exa
+          - virtualbox-guest-utils
+        state: latest
+        update_cache: true
+
