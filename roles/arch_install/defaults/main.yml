@@ -38,6 +38,7 @@ arch_install_base_packages:
   - mkinitcpio
   - openssh
   - sudo
+  - python
   - neovim
   - zsh
 
