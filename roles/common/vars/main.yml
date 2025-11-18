@@ -1,0 +1,3 @@
+---
+# Role-specific variables (higher precedence than defaults)
+# Use this file for variables that should rarely be overridden

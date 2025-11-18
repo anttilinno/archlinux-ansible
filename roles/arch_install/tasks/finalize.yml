@@ -1,0 +1,36 @@
+---
+- name: Write installation completion marker
+  ansible.builtin.file:
+    path: "{{ arch_install_state_marker }}"
+    state: touch
+    mode: '0644'
+
+# (Optional but recommended) ensure the target will accept SSH after reboot
+- name: Enable sshd in target
+  ansible.builtin.command: arch-chroot /mnt systemctl enable sshd
+  changed_when: false
+
+# Cleanly unmount everything under /mnt
+- name: Recursively unmount target filesystem
+  ansible.builtin.shell: |
+    set -euo pipefail
+    # Try a recursive unmount first
+    umount -R /mnt 2>/dev/null || true
+    # If still mounted, fall back to lazy unmount
+    mountpoint -q /mnt && umount -l /mnt || true
+  args:
+    executable: /bin/bash
+  changed_when: true
+
+# Fire-and-forget reboot so Ansible doesn't wait for the ISO host to return
+- name: Reboot into fresh Arch install (fire-and-forget)
+  ansible.builtin.shell: "sleep 2 && systemctl reboot"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: arch_install_perform_reboot | bool
+
+# Stop this play so we don't wait for SSH to return
+- name: End play after triggering reboot
+  ansible.builtin.meta: end_play
+  when: arch_install_perform_reboot | bool

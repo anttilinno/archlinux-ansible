@@ -1,0 +1,51 @@
+---
+- name: Set timezone
+  ansible.builtin.command: >
+    arch-chroot /mnt ln -sf /usr/share/zoneinfo/{{ arch_install_timezone }} /etc/localtime
+  args:
+    creates: /mnt/etc/localtime
+  changed_when: true
+
+- name: Set hardware clock
+  ansible.builtin.command: arch-chroot /mnt hwclock --systohc
+  changed_when: false
+
+- name: Ensure /etc/vconsole.conf exists
+  ansible.builtin.copy:
+    dest: /mnt/etc/vconsole.conf
+    mode: '0644'
+    content: |
+      KEYMAP={{ arch_install_keymap }}
+
+- name: Enable locale in locale.gen
+  ansible.builtin.lineinfile:
+    path: /mnt/etc/locale.gen
+    regexp: '^#?{{ arch_install_locale }}'
+    line: '{{ arch_install_locale }} UTF-8'
+    state: present
+
+- name: Generate locales
+  ansible.builtin.command: arch-chroot /mnt locale-gen
+  changed_when: true
+
+- name: Set LANG variable
+  ansible.builtin.copy:
+    dest: /mnt/etc/locale.conf
+    content: "LANG={{ arch_install_locale }}\n"
+    mode: '0644'
+
+- name: Set hostname
+  ansible.builtin.copy:
+    dest: /mnt/etc/hostname
+    content: "{{ arch_install_hostname }}\n"
+    mode: '0644'
+
+- name: Configure /etc/hosts
+  ansible.builtin.copy:
+    dest: /mnt/etc/hosts
+    content: |
+      127.0.0.1   localhost
+      ::1         localhost
+      127.0.1.1   {{ arch_install_hostname }}.localdomain {{ arch_install_hostname }}
+    mode: '0644'
+

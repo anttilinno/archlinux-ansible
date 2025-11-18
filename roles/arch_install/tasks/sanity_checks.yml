@@ -1,0 +1,21 @@
+---
+- name: Check that pacstrap is available on ISO
+  ansible.builtin.command: which pacstrap
+  changed_when: false
+  check_mode: false
+
+- name: Check if target already has base system
+  ansible.builtin.stat:
+    path: /mnt/etc/arch-release
+  register: arch_install_already_installed
+  check_mode: false
+
+- name: Display installation status
+  ansible.builtin.debug:
+    msg: >-
+      {% if arch_install_already_installed.stat.exists %}
+      Arch Linux is already installed. Use arch_install_force_repartition=true to reinstall.
+      {% else %}
+      No existing installation detected. Proceeding with fresh install.
+      {% endif %}
+

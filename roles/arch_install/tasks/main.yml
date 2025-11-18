@@ -1,0 +1,64 @@
+---
+# Main task file that orchestrates the Arch Linux installation
+- name: Sanity checks
+  ansible.builtin.import_tasks: sanity_checks.yml
+  tags:
+    - arch_install
+    - sanity_checks
+
+- name: Partition and format disk
+  ansible.builtin.import_tasks: partitioning.yml
+  tags:
+    - arch_install
+    - partitioning
+  when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+- name: Mount filesystems
+  ansible.builtin.import_tasks: mount.yml
+  tags:
+    - arch_install
+    - mount
+
+- name: Configure package mirrors
+  ansible.builtin.import_tasks: mirrors.yml
+  tags:
+    - arch_install
+    - mirrors
+
+- name: Install base system
+  ansible.builtin.import_tasks: pacstrap.yml
+  tags:
+    - arch_install
+    - pacstrap
+  when: not arch_install_already_installed.stat.exists
+
+- name: Configure base system
+  ansible.builtin.import_tasks: configure_system.yml
+  tags:
+    - arch_install
+    - configure
+
+- name: Configure users and authentication
+  ansible.builtin.import_tasks: users.yml
+  tags:
+    - arch_install
+    - users
+
+- name: Enable system services
+  ansible.builtin.import_tasks: services.yml
+  tags:
+    - arch_install
+    - services
+
+- name: Install and configure bootloader
+  ansible.builtin.import_tasks: bootloader.yml
+  tags:
+    - arch_install
+    - bootloader
+
+- name: Finalize installation
+  ansible.builtin.import_tasks: finalize.yml
+  tags:
+    - arch_install
+    - finalize
+

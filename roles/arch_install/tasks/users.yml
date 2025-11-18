@@ -1,0 +1,75 @@
+---
+- name: Check if admin user exists in target
+  ansible.builtin.command: arch-chroot /mnt id -u {{ arch_install_admin_user }}
+  register: arch_install_admin_check
+  failed_when: false
+  changed_when: false
+  check_mode: false
+
+- name: Add admin user with home if missing
+  ansible.builtin.command: >
+    arch-chroot /mnt useradd -m -G wheel -s {{ arch_install_admin_shell }} {{ arch_install_admin_user }}
+  when: arch_install_admin_check.rc != 0
+  changed_when: true
+
+- name: Ensure sudo is installed in target
+  ansible.builtin.command: arch-chroot /mnt pacman -S --needed --noconfirm sudo
+  changed_when: false
+
+- name: Allow wheel group via sudoers drop-in
+  ansible.builtin.copy:
+    dest: /mnt/etc/sudoers.d/10-wheel
+    content: "%wheel ALL=(ALL:ALL) ALL\n"
+    mode: '0440'
+    owner: root
+    group: root
+
+- name: Validate sudoers inside chroot (parses includes)
+  ansible.builtin.command: arch-chroot /mnt visudo -cf /etc/sudoers
+  changed_when: false
+
+- name: Set root password (lock or hash)
+  ansible.builtin.command: >
+    arch-chroot /mnt bash -lc "chpasswd -c SHA512"
+  args:
+    stdin: "root:{{ arch_install_admin_password_plain }}"
+  when:
+    - arch_install_root_password_plain is defined
+    - arch_install_root_password_plain | length > 0
+  changed_when: true
+  no_log: true
+
+- name: Set admin password if provided
+  ansible.builtin.command: >
+    arch-chroot /mnt bash -lc "chpasswd -c SHA512"
+  args:
+    stdin: "{{ arch_install_admin_user }}:{{ arch_install_admin_password_plain }}"
+  when:
+    - arch_install_admin_password_plain is defined
+    - arch_install_admin_password_plain | length > 0
+  changed_when: true
+  no_log: true
+
+- name: Ensure shell for admin
+  ansible.builtin.user:
+    name: "{{ arch_install_admin_user }}"
+    shell: "{{ arch_install_admin_shell }}"
+
+- name: Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: /mnt/home/{{ arch_install_admin_user }}/.ssh
+    state: directory
+    mode: '0700'
+
+- name: Install admin SSH key
+  ansible.builtin.copy:
+    dest: /mnt/home/{{ arch_install_admin_user }}/.ssh/authorized_keys
+    content: "{{ arch_install_admin_pubkey }}\n"
+    mode: '0600'
+  when: arch_install_admin_pubkey is defined and arch_install_admin_pubkey | length > 0
+
+- name: Fix ownership of home directory and .ssh
+  ansible.builtin.command: >
+    arch-chroot /mnt chown -R {{ arch_install_admin_user }}:{{ arch_install_admin_user }} /home/{{ arch_install_admin_user }}
+  changed_when: true
+

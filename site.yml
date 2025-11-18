@@ -1,0 +1,27 @@
+---
+# Post-installation provisioning for T60
+# Run this after the system has been installed and rebooted
+- name: Post-install provisioning for T60
+  hosts: t60
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Ensure pacman cache is up to date
+      community.general.pacman:
+        update_cache: true
+      tags:
+        - always
+
+  roles:
+    - role: common
+      tags:
+        - common
+        - baseline
+
+  post_tasks:
+    - name: Provisioning complete
+      ansible.builtin.debug:
+        msg: "Post-installation provisioning completed successfully!"
+      tags:
+        - always

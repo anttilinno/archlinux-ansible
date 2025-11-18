@@ -1,0 +1,10 @@
+---
+# Common role defaults
+common_packages:
+  - vim
+  - htop
+  - git
+  - curl
+  - wget
+  - tmux
+common_users: []

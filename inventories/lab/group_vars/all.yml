@@ -1,0 +1,9 @@
+---
+# Variables for ISO/installation environment
+# Override arch_install role defaults here if needed
+
+# Example overrides:
+# arch_install_hostname: t60
+# arch_install_disk: /dev/sda
+# arch_install_admin_user: antti
+

@@ -1,0 +1,66 @@
+---
+- name: Mirror configuration block
+  when: not arch_install_skip_mirror_refresh
+  block:
+    - name: Get current epoch on target
+      ansible.builtin.command: date +%s
+      register: arch_install_now_ts
+      changed_when: false
+      check_mode: false
+
+    - name: Stat current mirrorlist
+      ansible.builtin.stat:
+        path: /etc/pacman.d/mirrorlist
+      register: arch_install_mirrorlist_stat
+
+    - name: Check if reflector is available
+      ansible.builtin.command: reflector --version
+      register: arch_install_reflector_ver
+      failed_when: false
+      changed_when: false
+      check_mode: false
+
+    - name: Refresh mirrors with reflector
+      ansible.builtin.command: >
+        timeout {{ arch_install_reflector_timeout_secs }}s
+        reflector --country {{ arch_install_reflector_countries | join(',') }}
+                  --protocol https --latest 20 --sort rate
+                  --save /etc/pacman.d/mirrorlist
+      register: arch_install_reflector_result
+      failed_when: false
+      changed_when: "'Saved' in (arch_install_reflector_result.stdout | string) or 'Saved' in (arch_install_reflector_result.stderr | string)"
+      when:
+        - (arch_install_reflector_ver.rc | default(1)) == 0
+        - >-
+          (arch_install_mirrorlist_stat.stat.exists | default(false)) == false or
+          ((arch_install_now_ts.stdout | int) - (arch_install_mirrorlist_stat.stat.mtime | default(0) | int) > arch_install_mirror_refresh_interval_secs)
+
+    - name: Fallback mirrorlist if reflector missing/failed
+      ansible.builtin.copy:
+        dest: /etc/pacman.d/mirrorlist
+        content: |
+          Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch
+        mode: '0644'
+      register: arch_install_fallback_mirror
+      when:
+        - (arch_install_reflector_ver.rc | default(1)) != 0 or
+          arch_install_reflector_result is failed or
+          (arch_install_reflector_result.rc | default(1)) != 0
+
+- name: Check if pacman sync DB exists
+  ansible.builtin.stat:
+    path: /var/lib/pacman/sync/core.db
+  register: arch_install_coredb
+
+- name: Force refresh pacman databases when needed
+  ansible.builtin.command: pacman -Syy --noconfirm
+  when: >-
+    (arch_install_reflector_result is defined and arch_install_reflector_result.changed) or
+    (arch_install_fallback_mirror is defined and (arch_install_fallback_mirror.changed | default(false))) or
+    (arch_install_coredb.stat.exists is not defined or arch_install_coredb.stat.exists == false)
+  changed_when: true
+
+- name: Ensure archlinux-keyring is up to date
+  ansible.builtin.command: pacman -Sy --noconfirm --needed archlinux-keyring
+  changed_when: false
+

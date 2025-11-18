@@ -1,0 +1,45 @@
+---
+# Ansible-lint configuration
+profile: production
+
+# Exclude certain paths
+exclude_paths:
+  - .cache/
+  - .git/
+  - venv/
+
+# Enable offline mode (don't check for new rules)
+offline: false
+
+# List of rules to skip
+skip_list:
+  - yaml[line-length]  # Allow longer lines in some cases
+  - no-changed-when    # Some commands legitimately need changed_when
+  - command-instead-of-module  # Some arch-chroot commands cannot be replaced
+  - risky-shell-pipe   # Some shell pipes are necessary
+
+# Warn for these rules instead of failing
+warn_list:
+  - experimental
+  - no-handler
+  - fqcn[action-core]
+
+# Enable checking for specific rule violations
+enable_list:
+  - yaml
+  - fqcn-builtins
+
+# Use the default set of rules
+use_default_rules: true
+
+# Mock modules and roles that might not be available
+mock_modules:
+  - community.general.parted
+  - community.general.filesystem
+  - community.general.pacman
+
+mock_roles: []
+
+# Write JSON output for easier parsing
+# parseable: true
+

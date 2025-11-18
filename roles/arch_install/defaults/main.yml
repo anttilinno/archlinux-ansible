@@ -1,0 +1,61 @@
+---
+# Hardware configuration
+arch_install_disk: /dev/sda
+arch_install_root_fs_label: archroot
+
+# System configuration
+arch_install_hostname: t60
+arch_install_locale: en_US.UTF-8
+arch_install_timezone: Europe/Tallinn
+arch_install_keymap: us
+
+# User configuration
+arch_install_admin_user: antti
+arch_install_admin_shell: /bin/zsh
+arch_install_admin_pubkey: "{{ lookup('file', '~/.ssh/id_ed25519.pub', errors='ignore') | default(lookup('file','~/.ssh/id_rsa.pub')) }}"
+arch_install_root_password_hash: '!*'  # Locked by default
+
+# Safety toggles
+arch_install_force_repartition: false
+arch_install_state_marker: /mnt/root/.ansible-stage0-done
+
+# Partition layout (MBR)
+arch_install_swap_start: 1MiB
+arch_install_swap_end: 4GiB
+
+# Package set
+arch_install_base_packages:
+  - base
+  - linux
+  - linux-firmware
+  - networkmanager
+  - wpa_supplicant
+  - intel-ucode
+  - mesa
+  - xf86-video-intel
+  - syslinux
+  - iptables
+  - mkinitcpio
+  - openssh
+  - sudo
+  - neovim
+  - zsh
+
+# Mirror refresh behavior
+arch_install_mirror_refresh_interval_secs: 86400  # 1 day
+arch_install_reflector_timeout_secs: 20
+arch_install_skip_mirror_refresh: false
+arch_install_reflector_countries:
+  - Estonia
+  - Finland
+  - Sweden
+  - Latvia
+  - Lithuania
+
+# Mount options
+arch_install_root_mount_opts: noatime
+
+# Reboot behavior
+arch_install_perform_reboot: true
+arch_install_reboot_timeout: 180
+

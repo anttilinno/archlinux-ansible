@@ -1,0 +1,32 @@
+---
+- name: Base system installation block
+  block:
+    - name: Install base system and requested packages
+      ansible.builtin.shell: |
+        set -e
+        export PACMAN_OPTS="--noconfirm --disable-download-timeout"
+        pacstrap -K /mnt {{ (arch_install_base_packages | unique) | join(' ') }}
+      args:
+        executable: /bin/bash
+      register: arch_install_pacstrap_out
+      retries: 3
+      delay: 30
+      until: arch_install_pacstrap_out.rc == 0
+      when: not arch_install_already_installed.stat.exists
+      changed_when: true
+
+    - name: Generate fstab in target
+      ansible.builtin.shell: "genfstab -U /mnt >> /mnt/etc/fstab"
+      args:
+        executable: /bin/bash
+      when: not arch_install_already_installed.stat.exists
+      changed_when: true
+
+  rescue:
+    - name: Pacstrap failed
+      ansible.builtin.fail:
+        msg: "Base system installation failed. Check network connectivity and mirror availability."
+
+  tags:
+    - pacstrap
+

@@ -1,0 +1,62 @@
+---
+- name: Partitioning block
+  block:
+    - name: Detect current partition table type
+      ansible.builtin.command: lsblk -no PTTYPE {{ arch_install_disk }}
+      register: arch_install_pttype
+      changed_when: false
+      failed_when: arch_install_pttype.rc not in [0, 32]  # 32 when no label yet
+      check_mode: false
+
+    - name: Ensure msdos (MBR) label on {{ arch_install_disk }}
+      ansible.builtin.command: parted -s {{ arch_install_disk }} mklabel msdos
+      when:
+        - (arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists)
+        - (arch_install_pttype.stdout | trim != 'dos')
+
+    - name: Ensure swap partition ({{ arch_install_swap_start }}–{{ arch_install_swap_end }})
+      community.general.parted:
+        device: "{{ arch_install_disk }}"
+        number: 1
+        part_type: primary
+        part_start: "{{ arch_install_swap_start }}"
+        part_end: "{{ arch_install_swap_end }}"
+        fs_type: linux-swap
+        state: present
+      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Ensure ext4 root partition ({{ arch_install_swap_end }}–end) with boot flag
+      community.general.parted:
+        device: "{{ arch_install_disk }}"
+        number: 2
+        part_type: primary
+        part_start: "{{ arch_install_swap_end }}"
+        part_end: 100%
+        fs_type: ext4
+        flags: [boot]
+        state: present
+      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Create swap filesystem on {{ arch_install_disk }}1
+      community.general.filesystem:
+        fstype: swap
+        dev: "{{ arch_install_disk }}1"
+        force: "{{ arch_install_force_repartition | bool | ternary('yes', 'no') }}"
+      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Create ext4 filesystem on {{ arch_install_disk }}2
+      community.general.filesystem:
+        fstype: ext4
+        dev: "{{ arch_install_disk }}2"
+        opts: "-L {{ arch_install_root_fs_label }}"
+        force: "{{ arch_install_force_repartition | bool | ternary('yes', 'no') }}"
+      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+  rescue:
+    - name: Partitioning failed
+      ansible.builtin.fail:
+        msg: "Partitioning failed. Check disk {{ arch_install_disk }} status and permissions."
+
+  tags:
+    - partitioning
+

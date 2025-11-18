@@ -1,0 +1,35 @@
+---
+- name: Ensure /boot/syslinux exists in target
+  ansible.builtin.file:
+    path: /mnt/boot/syslinux
+    state: directory
+    mode: '0755'
+
+- name: Get PARTUUID of root partition
+  ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_disk }}2
+  register: arch_install_root_partuuid
+  changed_when: false
+  check_mode: false
+
+- name: Copy example syslinux.cfg as active config
+  ansible.builtin.copy:
+    src: /mnt/usr/share/syslinux/syslinux.cfg
+    dest: /mnt/boot/syslinux/syslinux.cfg
+    remote_src: true
+    mode: '0644'
+    force: true
+
+- name: Set root=PARTUUID in arch + fallback entries
+  ansible.builtin.replace:
+    path: /mnt/boot/syslinux/syslinux.cfg
+    regexp: '^\s*APPEND\s+root=.*'
+    replace: "    APPEND root=PARTUUID={{ arch_install_root_partuuid.stdout }} rw"
+  notify: reinstall syslinux mbr
+
+- name: Rebuild initramfs
+  ansible.builtin.command: arch-chroot /mnt mkinitcpio -P
+  changed_when: true
+
+- name: Flush handlers to install syslinux MBR
+  ansible.builtin.meta: flush_handlers
+

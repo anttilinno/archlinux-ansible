@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  role_name: common
+  author: Antti
+  description: Common baseline configuration for all systems
+  company:
+  license: MIT
+  min_ansible_version: "2.14"
+  platforms:
+    - name: ArchLinux
+      versions:
+        - all
+  galaxy_tags:
+    - system
+    - baseline
+    - common
+
+dependencies: []
+
+collections:
+  - community.general
+  - ansible.posix

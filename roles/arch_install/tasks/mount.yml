@@ -1,0 +1,27 @@
+---
+- name: Ensure mountpoint /mnt exists
+  ansible.builtin.file:
+    path: /mnt
+    state: directory
+    mode: '0755'
+
+- name: Mount root (ext4) with fstab entry
+  ansible.posix.mount:
+    path: /mnt
+    src: "{{ arch_install_disk }}2"
+    fstype: ext4
+    opts: "{{ arch_install_root_mount_opts }}"
+    state: mounted
+
+- name: Ensure swap entry in fstab
+  ansible.posix.mount:
+    path: none
+    src: "{{ arch_install_disk }}1"
+    fstype: swap
+    state: present
+
+- name: Activate swap
+  ansible.builtin.command: swapon -a
+  changed_when: false
+  failed_when: false
+

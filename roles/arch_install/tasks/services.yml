@@ -1,0 +1,13 @@
+---
+- name: Ensure service packages exist in target
+  ansible.builtin.shell: |
+    set -e
+    arch-chroot /mnt pacman -S --needed --noconfirm openssh networkmanager
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+- name: Enable sshd and NetworkManager units in target
+  ansible.builtin.command: systemctl --root=/mnt enable sshd.service NetworkManager.service
+  changed_when: true
+

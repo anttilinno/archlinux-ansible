@@ -1,0 +1,36 @@
+# Ansible specific
+*.retry
+.ansible/
+.cache/
+~/.ansible/facts_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Vault files (be careful!)
+*vault*
+*secret*
+*.key
+*.pem
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log

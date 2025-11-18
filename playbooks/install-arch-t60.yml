@@ -1,0 +1,44 @@
+---
+# WARNING: Destructive if arch_install_force_repartition=true
+# This playbook installs Arch Linux on bare metal from the ISO environment
+- name: Install Arch Linux on T60 from ISO over SSH
+  hosts: t60_iso
+  become: true
+  gather_facts: false
+
+  vars_prompt:
+    - name: arch_install_admin_password_plain
+      prompt: "New admin password for '{{ arch_install_admin_user | default('antti') }}'"
+      private: true
+
+  pre_tasks:
+    - name: Display warning about destructive operations
+      ansible.builtin.debug:
+        msg: >-
+          WARNING: This playbook will partition and format {{ arch_install_disk | default('/dev/sda') }}
+          if arch_install_force_repartition=true or no existing installation is found.
+          Press Ctrl+C within 10 seconds to abort.
+      tags:
+        - always
+
+    - name: Pause for safety
+      ansible.builtin.pause:
+        seconds: 10
+      when: arch_install_force_repartition | default(false) | bool
+      tags:
+        - always
+
+  roles:
+    - role: arch_install
+      tags:
+        - arch_install
+        - install
+
+  post_tasks:
+    - name: Installation complete
+      ansible.builtin.debug:
+        msg: >-
+          Installation complete!
+          After reboot, connect to the system using the 'prod' inventory.
+      tags:
+        - always
