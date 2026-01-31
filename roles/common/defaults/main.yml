@@ -97,3 +97,4 @@ common_aur_enabled: false
 common_aur_packages:
   - shellcheck-bin
   - i3lock-color
+  - zen-browser-bin
