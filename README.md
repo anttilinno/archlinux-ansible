@@ -19,7 +19,7 @@ A comprehensive Ansible project for bare metal Arch Linux installation and post-
 │       └── group_vars/
 │           └── all.yml
 ├── playbooks/
-│   └── install-arch-t60.yml # Stage-0 installation playbook
+│   └── install-arch.yml # Stage-0 installation playbook
 └── roles/
     ├── arch_install/        # Bare metal installation role
     │   ├── defaults/
@@ -38,7 +38,7 @@ A comprehensive Ansible project for bare metal Arch Linux installation and post-
 ## Components
 
 ### Playbooks
-- **`playbooks/install-arch-t60.yml`**: Stage-0 **destructive** installer run from Arch ISO over SSH
+- **`playbooks/install-arch.yml`**: Stage-0 **destructive** installer run from Arch ISO over SSH
 - **`site.yml`**: Post-install provisioning (packages, services, configuration)
 
 ### Roles
@@ -82,7 +82,7 @@ ansible-galaxy install -r requirements.yml
 # Run the installer from the ISO environment
 ANSIBLE_HOST_KEY_CHECKING=False \
 ansible-playbook -i inventories/lab/hosts.ini \
-  playbooks/install-arch-t60.yml \
+  playbooks/install-arch.yml \
   --ask-pass
 ```
 
