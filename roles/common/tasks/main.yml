@@ -20,7 +20,8 @@
     dest: /tmp/yay-bin
     version: master
   when: yay_check.rc != 0
-  become: false
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
   tags: [aur, yay]
 
 - name: Build and install yay
@@ -28,7 +29,8 @@
   args:
     chdir: /tmp/yay-bin
   when: yay_check.rc != 0
-  become: false
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
   tags: [aur, yay]
 
 - name: Clean up yay build directory
@@ -138,7 +140,8 @@
   tags: [packages, fonts]
 
 - name: Install AUR packages
-  become: false
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
   ansible.builtin.command: yay -S --noconfirm --needed {{ common_aur_packages | join(' ') }}
   when: common_aur_enabled | bool
   tags: [packages, aur]
