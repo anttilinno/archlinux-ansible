@@ -17,6 +17,7 @@ arch_install_keymap: us
 arch_install_admin_user: antti
 arch_install_admin_shell: /bin/zsh
 arch_install_admin_pubkey: "{{ lookup('file', '~/.ssh/id_ed25519.pub', errors='ignore') | default(lookup('file','~/.ssh/id_rsa.pub')) }}"
+arch_install_repo_url: https://github.com/anttilinno/archlinux-ansible.git
 arch_install_root_password_hash: '!*'  # Locked by default
 
 # Safety toggles

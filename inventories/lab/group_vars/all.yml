@@ -15,5 +15,5 @@ arch_install_gpu: intel
 arch_install_boot_mode: bios
 
 # Wifi support (networkmanager, wpa_supplicant)
-arch_install_wifi: true
+arch_install_wifi: false
 

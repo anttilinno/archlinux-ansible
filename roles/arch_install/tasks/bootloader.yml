@@ -38,16 +38,21 @@
     dest: /mnt/boot/syslinux/syslinux.cfg
     mode: '0644'
     content: |
-      DEFAULT arch
-      PROMPT 1
+      UI menu.c32
+      PROMPT 0
+
+      MENU TITLE Arch Linux Boot Menu
       TIMEOUT 30
+      DEFAULT arch
 
       LABEL arch
+          MENU LABEL Arch Linux
           LINUX ../vmlinuz-linux-lts
           APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
           INITRD ../initramfs-linux-lts.img
 
       LABEL archfallback
+          MENU LABEL Arch Linux (fallback)
           LINUX ../vmlinuz-linux-lts
           APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
           INITRD ../initramfs-linux-lts-fallback.img

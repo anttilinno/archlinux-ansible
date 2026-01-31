@@ -68,7 +68,14 @@
     mode: '0600'
   when: arch_install_admin_pubkey is defined and arch_install_admin_pubkey | length > 0
 
-- name: Fix ownership of home directory and .ssh
+- name: Clone ansible repo to user home
+  ansible.builtin.command: >
+    arch-chroot /mnt git clone {{ arch_install_repo_url }} /home/{{ arch_install_admin_user }}/archlinux-ansible
+  args:
+    creates: /mnt/home/{{ arch_install_admin_user }}/archlinux-ansible
+  when: arch_install_repo_url is defined and arch_install_repo_url | length > 0
+
+- name: Fix ownership of home directory
   ansible.builtin.command: >
     arch-chroot /mnt chown -R {{ arch_install_admin_user }}:{{ arch_install_admin_user }} /home/{{ arch_install_admin_user }}
   changed_when: true
