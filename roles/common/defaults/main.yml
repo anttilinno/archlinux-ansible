@@ -62,13 +62,14 @@ common_docker_packages:
   - docker-compose
   - lazydocker
 
-# Audio (pipewire, no GUI)
+# Audio (pipewire)
 common_audio_enabled: false
 common_audio_packages:
   - pipewire
   - pipewire-pulse
   - wireplumber
   - alsa-utils
+  - pavucontrol
 
 # i3 window manager (Xorg)
 common_i3_enabled: false
@@ -91,6 +92,14 @@ common_fonts_packages:
   - ttf-jetbrains-mono-nerd
   - ttf-nerd-fonts-symbols-mono
   - noto-fonts-emoji
+
+# Office/productivity apps (uses yay for AUR packages)
+common_office_enabled: false
+common_office_packages:
+  - audacity
+  - libreoffice-fresh
+  - obsidian-bin
+  - slack-desktop
 
 # AUR packages (requires yay to be installed first)
 common_aur_enabled: false

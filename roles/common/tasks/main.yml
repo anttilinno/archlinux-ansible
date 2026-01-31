@@ -156,6 +156,13 @@
   when: common_fonts_enabled | bool
   tags: [packages, fonts]
 
+- name: Install office packages
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  ansible.builtin.command: yay -S --noconfirm --needed {{ common_office_packages | join(' ') }}
+  when: common_office_enabled | bool
+  tags: [packages, office]
+
 - name: Install AUR packages
   become: true
   become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
