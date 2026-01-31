@@ -5,7 +5,7 @@
       ansible.builtin.shell: |
         set -e
         export PACMAN_OPTS="--noconfirm --disable-download-timeout"
-        pacstrap -K /mnt {{ (arch_install_base_packages | unique) | join(' ') }}
+        pacstrap -K /mnt {{ (arch_install_base_packages + arch_install_cpu_packages[arch_install_cpu] + arch_install_gpu_packages[arch_install_gpu] + arch_install_boot_packages[arch_install_boot_mode] + (arch_install_wifi | bool | ternary(arch_install_wifi_packages, []))) | unique | join(' ') }}
       args:
         executable: /bin/bash
       register: arch_install_pacstrap_out

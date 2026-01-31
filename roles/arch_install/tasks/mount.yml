@@ -5,23 +5,59 @@
     state: directory
     mode: '0755'
 
-- name: Mount root (ext4) with fstab entry
+# BIOS: root on partition 2, swap on partition 1
+- name: Mount root partition (BIOS)
   ansible.posix.mount:
     path: /mnt
     src: "{{ arch_install_disk }}2"
     fstype: ext4
     opts: "{{ arch_install_root_mount_opts }}"
     state: mounted
+  when: arch_install_boot_mode == 'bios'
 
-- name: Ensure swap entry in fstab
+- name: Configure swap (BIOS)
   ansible.posix.mount:
     path: none
     src: "{{ arch_install_disk }}1"
     fstype: swap
     state: present
+  when: arch_install_boot_mode == 'bios'
+
+# UEFI: root on partition 3, swap on partition 2, EFI on partition 1
+- name: Mount root partition (UEFI)
+  ansible.posix.mount:
+    path: /mnt
+    src: "{{ arch_install_disk }}3"
+    fstype: ext4
+    opts: "{{ arch_install_root_mount_opts }}"
+    state: mounted
+  when: arch_install_boot_mode == 'uefi'
+
+- name: Ensure /mnt/boot/efi exists (UEFI)
+  ansible.builtin.file:
+    path: /mnt/boot/efi
+    state: directory
+    mode: '0755'
+  when: arch_install_boot_mode == 'uefi'
+
+- name: Mount EFI partition (UEFI)
+  ansible.posix.mount:
+    path: /mnt/boot/efi
+    src: "{{ arch_install_disk }}1"
+    fstype: vfat
+    opts: "umask=0077"
+    state: mounted
+  when: arch_install_boot_mode == 'uefi'
+
+- name: Configure swap (UEFI)
+  ansible.posix.mount:
+    path: none
+    src: "{{ arch_install_disk }}2"
+    fstype: swap
+    state: present
+  when: arch_install_boot_mode == 'uefi'
 
 - name: Activate swap
   ansible.builtin.command: swapon -a
   changed_when: false
   failed_when: false
-

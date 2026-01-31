@@ -1,5 +1,4 @@
 ---
-- name: reinstall syslinux mbr
+- name: install syslinux mbr
   ansible.builtin.command: arch-chroot /mnt syslinux-install_update -i -a -m
   changed_when: true
-

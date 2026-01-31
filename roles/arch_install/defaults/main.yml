@@ -2,6 +2,10 @@
 # Hardware configuration
 arch_install_disk: /dev/sda
 arch_install_root_fs_label: archroot
+arch_install_cpu: intel      # intel, amd, or none
+arch_install_gpu: intel      # intel, amd, nvidia, or none
+arch_install_boot_mode: bios # bios or uefi
+arch_install_wifi: true      # install wifi packages (networkmanager, wpa_supplicant)
 
 # System configuration
 arch_install_hostname: t60
@@ -19,21 +23,15 @@ arch_install_root_password_hash: '!*'  # Locked by default
 arch_install_force_repartition: false
 arch_install_state_marker: /mnt/root/.ansible-stage0-done
 
-# Partition layout (MBR)
-arch_install_swap_start: 1MiB
-arch_install_swap_end: 4GiB
+# Partition layout
+arch_install_efi_size: 512MiB  # UEFI only
+arch_install_swap_size: 4GiB
 
-# Package set
+# Package set (core - always installed)
 arch_install_base_packages:
   - base
-  - linux
+  - linux-lts
   - linux-firmware
-  - networkmanager
-  - wpa_supplicant
-  - intel-ucode
-  - mesa
-  - xf86-video-intel
-  - syslinux
   - iptables
   - mkinitcpio
   - openssh
@@ -41,6 +39,43 @@ arch_install_base_packages:
   - python
   - neovim
   - zsh
+  - ansible
+  - git
+
+# Wifi packages
+arch_install_wifi_packages:
+  - networkmanager
+  - wpa_supplicant
+
+# CPU-specific packages
+arch_install_cpu_packages:
+  intel:
+    - intel-ucode
+  amd:
+    - amd-ucode
+  none: []
+
+# GPU-specific packages
+arch_install_gpu_packages:
+  intel:
+    - mesa
+    - xf86-video-intel
+  amd:
+    - mesa
+    - xf86-video-amdgpu
+  nvidia:
+    - nvidia
+    - nvidia-utils
+  none:
+    - mesa
+
+# Boot mode packages
+arch_install_boot_packages:
+  bios:
+    - syslinux
+  uefi:
+    - limine
+    - efibootmgr
 
 # Mirror refresh behavior
 arch_install_mirror_refresh_interval_secs: 86400  # 1 day

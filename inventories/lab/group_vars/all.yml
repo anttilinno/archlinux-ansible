@@ -2,8 +2,18 @@
 # Variables for ISO/installation environment
 # Override arch_install role defaults here if needed
 
-# Example overrides:
-# arch_install_hostname: t60
-# arch_install_disk: /dev/sda
-# arch_install_admin_user: antti
+# System
+arch_install_hostname: t60
+arch_install_disk: /dev/vda
+arch_install_admin_user: antti
+
+# Hardware: intel, amd, or none
+arch_install_cpu: intel
+arch_install_gpu: intel
+
+# Boot mode: bios or uefi
+arch_install_boot_mode: bios
+
+# Wifi support (networkmanager, wpa_supplicant)
+arch_install_wifi: true
 

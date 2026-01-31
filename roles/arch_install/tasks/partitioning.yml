@@ -5,52 +5,138 @@
       ansible.builtin.command: lsblk -no PTTYPE {{ arch_install_disk }}
       register: arch_install_pttype
       changed_when: false
-      failed_when: arch_install_pttype.rc not in [0, 32]  # 32 when no label yet
+      failed_when: arch_install_pttype.rc not in [0, 32]
       check_mode: false
 
-    - name: Ensure msdos (MBR) label on {{ arch_install_disk }}
+    # BIOS: MBR with swap + root
+    - name: Create MBR partition table (BIOS)
       ansible.builtin.command: parted -s {{ arch_install_disk }} mklabel msdos
       when:
-        - (arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists)
-        - (arch_install_pttype.stdout | trim != 'dos')
+        - arch_install_boot_mode == 'bios'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+        - arch_install_pttype.stdout | trim != 'dos'
 
-    - name: Ensure swap partition ({{ arch_install_swap_start }}–{{ arch_install_swap_end }})
+    - name: Create swap partition (BIOS)
       community.general.parted:
         device: "{{ arch_install_disk }}"
         number: 1
         part_type: primary
-        part_start: "{{ arch_install_swap_start }}"
-        part_end: "{{ arch_install_swap_end }}"
+        part_start: 1MiB
+        part_end: "{{ arch_install_swap_size }}"
         fs_type: linux-swap
         state: present
-      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+      when:
+        - arch_install_boot_mode == 'bios'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
-    - name: Ensure ext4 root partition ({{ arch_install_swap_end }}–end) with boot flag
+    - name: Create root partition (BIOS)
       community.general.parted:
         device: "{{ arch_install_disk }}"
         number: 2
         part_type: primary
-        part_start: "{{ arch_install_swap_end }}"
+        part_start: "{{ arch_install_swap_size }}"
         part_end: 100%
         fs_type: ext4
         flags: [boot]
         state: present
-      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+      when:
+        - arch_install_boot_mode == 'bios'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
-    - name: Create swap filesystem on {{ arch_install_disk }}1
+    # UEFI: GPT with EFI + swap + root
+    - name: Create GPT partition table (UEFI)
+      ansible.builtin.command: parted -s {{ arch_install_disk }} mklabel gpt
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+        - arch_install_pttype.stdout | trim != 'gpt'
+
+    - name: Create EFI partition (UEFI)
+      community.general.parted:
+        device: "{{ arch_install_disk }}"
+        number: 1
+        part_start: 1MiB
+        part_end: "{{ arch_install_efi_size }}"
+        fs_type: fat32
+        flags: [esp]
+        state: present
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Create swap partition (UEFI)
+      community.general.parted:
+        device: "{{ arch_install_disk }}"
+        number: 2
+        part_start: "{{ arch_install_efi_size }}"
+        part_end: "{{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB"
+        fs_type: linux-swap
+        state: present
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Create root partition (UEFI)
+      community.general.parted:
+        device: "{{ arch_install_disk }}"
+        number: 3
+        part_start: "{{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB"
+        part_end: 100%
+        fs_type: ext4
+        state: present
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    # Filesystems - BIOS
+    - name: Create swap filesystem (BIOS)
       community.general.filesystem:
         fstype: swap
         dev: "{{ arch_install_disk }}1"
-        force: "{{ arch_install_force_repartition | bool | ternary('yes', 'no') }}"
-      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+        force: "{{ arch_install_force_repartition | bool }}"
+      when:
+        - arch_install_boot_mode == 'bios'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
-    - name: Create ext4 filesystem on {{ arch_install_disk }}2
+    - name: Create ext4 root filesystem (BIOS)
       community.general.filesystem:
         fstype: ext4
         dev: "{{ arch_install_disk }}2"
         opts: "-L {{ arch_install_root_fs_label }}"
-        force: "{{ arch_install_force_repartition | bool | ternary('yes', 'no') }}"
-      when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+        force: "{{ arch_install_force_repartition | bool }}"
+      when:
+        - arch_install_boot_mode == 'bios'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    # Filesystems - UEFI
+    - name: Create FAT32 EFI filesystem (UEFI)
+      community.general.filesystem:
+        fstype: vfat
+        dev: "{{ arch_install_disk }}1"
+        opts: "-F 32"
+        force: "{{ arch_install_force_repartition | bool }}"
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Create swap filesystem (UEFI)
+      community.general.filesystem:
+        fstype: swap
+        dev: "{{ arch_install_disk }}2"
+        force: "{{ arch_install_force_repartition | bool }}"
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+    - name: Create ext4 root filesystem (UEFI)
+      community.general.filesystem:
+        fstype: ext4
+        dev: "{{ arch_install_disk }}3"
+        opts: "-L {{ arch_install_root_fs_label }}"
+        force: "{{ arch_install_force_repartition | bool }}"
+      when:
+        - arch_install_boot_mode == 'uefi'
+        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
   rescue:
     - name: Partitioning failed
@@ -59,4 +145,3 @@
 
   tags:
     - partitioning
-

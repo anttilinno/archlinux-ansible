@@ -1,35 +1,100 @@
 ---
-- name: Ensure /boot/syslinux exists in target
-  ansible.builtin.file:
-    path: /mnt/boot/syslinux
-    state: directory
-    mode: '0755'
-
-- name: Get PARTUUID of root partition
+- name: Get PARTUUID of root partition (BIOS)
   ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_disk }}2
   register: arch_install_root_partuuid
   changed_when: false
   check_mode: false
+  when: arch_install_boot_mode == 'bios'
 
-- name: Copy example syslinux.cfg as active config
+- name: Get PARTUUID of root partition (UEFI)
+  ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_disk }}3
+  register: arch_install_root_partuuid_uefi
+  changed_when: false
+  check_mode: false
+  when: arch_install_boot_mode == 'uefi'
+
+- name: Set root PARTUUID fact
+  ansible.builtin.set_fact:
+    arch_install_root_partuuid_final: "{{ arch_install_root_partuuid.stdout | default(arch_install_root_partuuid_uefi.stdout) }}"
+
+# BIOS: syslinux
+- name: Ensure /boot/syslinux exists (BIOS)
+  ansible.builtin.file:
+    path: /mnt/boot/syslinux
+    state: directory
+    mode: '0755'
+  when: arch_install_boot_mode == 'bios'
+
+- name: Copy syslinux modules to /boot/syslinux (BIOS)
+  ansible.builtin.shell: |
+    cp /mnt/usr/lib/syslinux/bios/*.c32 /mnt/boot/syslinux/
+  args:
+    executable: /bin/bash
+  when: arch_install_boot_mode == 'bios'
+  changed_when: true
+
+- name: Create syslinux.cfg (BIOS)
   ansible.builtin.copy:
-    src: /mnt/usr/share/syslinux/syslinux.cfg
     dest: /mnt/boot/syslinux/syslinux.cfg
+    mode: '0644'
+    content: |
+      DEFAULT arch
+      PROMPT 1
+      TIMEOUT 30
+
+      LABEL arch
+          LINUX ../vmlinuz-linux-lts
+          APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+          INITRD ../initramfs-linux-lts.img
+
+      LABEL archfallback
+          LINUX ../vmlinuz-linux-lts
+          APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+          INITRD ../initramfs-linux-lts-fallback.img
+  when: arch_install_boot_mode == 'bios'
+  notify: install syslinux mbr
+
+# UEFI: limine
+- name: Ensure EFI directories exist (UEFI)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /mnt/boot/efi/EFI/BOOT
+  when: arch_install_boot_mode == 'uefi'
+
+- name: Copy limine EFI binary (UEFI)
+  ansible.builtin.copy:
+    src: /mnt/usr/share/limine/BOOTX64.EFI
+    dest: /mnt/boot/efi/EFI/BOOT/BOOTX64.EFI
     remote_src: true
     mode: '0644'
-    force: true
+  when: arch_install_boot_mode == 'uefi'
 
-- name: Set root=PARTUUID in arch + fallback entries
-  ansible.builtin.replace:
-    path: /mnt/boot/syslinux/syslinux.cfg
-    regexp: '^\s*APPEND\s+root=.*'
-    replace: "    APPEND root=PARTUUID={{ arch_install_root_partuuid.stdout }} rw"
-  notify: reinstall syslinux mbr
+- name: Create limine.conf (UEFI)
+  ansible.builtin.copy:
+    dest: /mnt/boot/efi/limine.conf
+    mode: '0644'
+    content: |
+      timeout: 3
+
+      /Arch Linux
+          protocol: linux
+          kernel_path: boot():/vmlinuz-linux-lts
+          cmdline: root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+          module_path: boot():/initramfs-linux-lts.img
+
+      /Arch Linux (fallback)
+          protocol: linux
+          kernel_path: boot():/vmlinuz-linux-lts
+          cmdline: root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+          module_path: boot():/initramfs-linux-lts-fallback.img
+  when: arch_install_boot_mode == 'uefi'
 
 - name: Rebuild initramfs
   ansible.builtin.command: arch-chroot /mnt mkinitcpio -P
   changed_when: true
 
-- name: Flush handlers to install syslinux MBR
+- name: Flush handlers to install bootloader
   ansible.builtin.meta: flush_handlers
-

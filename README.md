@@ -62,9 +62,15 @@ ansible-galaxy install -r requirements.yml
 
 ### On the Target (T60)
 1. Boot Arch Linux ISO
-2. Enable SSH: `systemctl start sshd`
-3. Set root password: `passwd`
-4. Configure network connectivity
+2. **Increase tmpfs for Ansible** (required for 4GB RAM systems):
+   - At boot menu, press **TAB** and append: `tmpfs.size=4G`
+   - After boot, resize cowspace:
+     ```bash
+     mount -o remount,size=4G,noatime /run/archiso/cowspace
+     ```
+3. Enable SSH: `systemctl start sshd`
+4. Set root password: `passwd`
+5. Configure network connectivity
 
 ## Quick Start
 

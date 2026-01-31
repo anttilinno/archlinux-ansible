@@ -1,13 +1,28 @@
 ---
-- name: Ensure service packages exist in target
-  ansible.builtin.shell: |
-    set -e
-    arch-chroot /mnt pacman -S --needed --noconfirm openssh networkmanager
-  args:
-    executable: /bin/bash
-  changed_when: false
-
-- name: Enable sshd and NetworkManager units in target
-  ansible.builtin.command: systemctl --root=/mnt enable sshd.service NetworkManager.service
+- name: Enable sshd in target
+  ansible.builtin.command: systemctl --root=/mnt enable sshd.service
   changed_when: true
 
+# Wifi: NetworkManager
+- name: Enable NetworkManager in target
+  ansible.builtin.command: systemctl --root=/mnt enable NetworkManager.service
+  changed_when: true
+  when: arch_install_wifi | bool
+
+# No wifi: systemd-networkd
+- name: Enable systemd-networkd in target
+  ansible.builtin.command: systemctl --root=/mnt enable systemd-networkd.service systemd-resolved.service
+  changed_when: true
+  when: not (arch_install_wifi | bool)
+
+- name: Create systemd-networkd DHCP config for wired
+  ansible.builtin.copy:
+    dest: /mnt/etc/systemd/network/20-wired.network
+    mode: '0644'
+    content: |
+      [Match]
+      Name=en* eth*
+
+      [Network]
+      DHCP=yes
+  when: not (arch_install_wifi | bool)
