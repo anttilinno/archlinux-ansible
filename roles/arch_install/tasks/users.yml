@@ -19,7 +19,7 @@
 - name: Allow wheel group via sudoers drop-in
   ansible.builtin.copy:
     dest: /mnt/etc/sudoers.d/10-wheel
-    content: "%wheel ALL=(ALL:ALL) ALL\n"
+    content: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL\n"
     mode: '0440'
     owner: root
     group: root

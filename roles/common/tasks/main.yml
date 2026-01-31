@@ -1,13 +1,125 @@
 ---
 # Common baseline tasks
-- name: Ensure common packages are present
+
+- name: Install base-devel
   community.general.pacman:
-    name: "{{ common_packages }}"
+    name: base-devel
     state: present
-    update_cache: false
-  tags:
-    - packages
-    - common
+  tags: [packages, base]
+
+- name: Check if yay is installed
+  ansible.builtin.command: which yay
+  register: yay_check
+  changed_when: false
+  failed_when: false
+  tags: [aur, yay]
+
+- name: Clone yay-bin from AUR
+  ansible.builtin.git:
+    repo: https://aur.archlinux.org/yay-bin.git
+    dest: /tmp/yay-bin
+    version: master
+  when: yay_check.rc != 0
+  become: false
+  tags: [aur, yay]
+
+- name: Build and install yay
+  ansible.builtin.command: makepkg -si --noconfirm
+  args:
+    chdir: /tmp/yay-bin
+  when: yay_check.rc != 0
+  become: false
+  tags: [aur, yay]
+
+- name: Clean up yay build directory
+  ansible.builtin.file:
+    path: /tmp/yay-bin
+    state: absent
+  when: yay_check.rc != 0
+  tags: [aur, yay]
+
+- name: Install CLI tools
+  community.general.pacman:
+    name: "{{ common_cli_packages }}"
+    state: present
+  when: common_cli_enabled | bool
+  tags: [packages, cli]
+
+- name: Install shell packages
+  community.general.pacman:
+    name: "{{ common_shell_packages }}"
+    state: present
+  when: common_shell_enabled | bool
+  tags: [packages, shell]
+
+- name: Install git tools
+  community.general.pacman:
+    name: "{{ common_git_packages }}"
+    state: present
+  when: common_git_enabled | bool
+  tags: [packages, git]
+
+- name: Install file manager (yazi)
+  community.general.pacman:
+    name: "{{ common_filemanager_packages }}"
+    state: present
+  when: common_filemanager_enabled | bool
+  tags: [packages, filemanager]
+
+- name: Install development tools
+  community.general.pacman:
+    name: "{{ common_dev_packages }}"
+    state: present
+  when: common_dev_enabled | bool
+  tags: [packages, dev]
+
+- name: Install terminal multiplexer
+  community.general.pacman:
+    name: "{{ common_terminal_packages }}"
+    state: present
+  when: common_terminal_enabled | bool
+  tags: [packages, terminal]
+
+- name: Install docker
+  community.general.pacman:
+    name: "{{ common_docker_packages }}"
+    state: present
+  when: common_docker_enabled | bool
+  tags: [packages, docker]
+
+- name: Enable docker socket
+  ansible.builtin.systemd:
+    name: docker.socket
+    enabled: true
+  when: common_docker_enabled | bool
+  tags: [docker]
+
+- name: Install audio packages
+  community.general.pacman:
+    name: "{{ common_audio_packages }}"
+    state: present
+  when: common_audio_enabled | bool
+  tags: [packages, audio]
+
+- name: Install i3 packages
+  community.general.pacman:
+    name: "{{ common_i3_packages }}"
+    state: present
+  when: common_i3_enabled | bool
+  tags: [packages, i3]
+
+- name: Install fonts
+  community.general.pacman:
+    name: "{{ common_fonts_packages }}"
+    state: present
+  when: common_fonts_enabled | bool
+  tags: [packages, fonts]
+
+- name: Install AUR packages
+  become: false
+  ansible.builtin.command: yay -S --noconfirm --needed {{ common_aur_packages | join(' ') }}
+  when: common_aur_enabled | bool
+  tags: [packages, aur]
 
 - name: Ensure journald persistent storage
   ansible.builtin.lineinfile:
@@ -15,6 +127,4 @@
     regexp: '^#?Storage='
     line: 'Storage=persistent'
   notify: restart journald
-  tags:
-    - journald
-    - common
+  tags: [journald]

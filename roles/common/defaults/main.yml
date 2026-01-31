@@ -1,10 +1,99 @@
 ---
 # Common role defaults
-common_packages:
-  - vim
-  - htop
+# Enable/disable package groups per machine
+
+# CLI tools
+common_cli_enabled: true
+common_cli_packages:
+  - zoxide
+  - fzf
+  - fd
+  - eza
+  - bat
+  - ripgrep
+  - less
+  - jq
+  - unzip
+  - btop
+  - cyme
+
+# Shell
+common_shell_enabled: true
+common_shell_packages:
+  - zsh
+  - starship
+
+# Git tools
+common_git_enabled: true
+common_git_packages:
   - git
-  - curl
-  - wget
-  - tmux
-common_users: []
+  - lazygit
+  - github-cli
+
+# File manager (yazi + deps)
+common_filemanager_enabled: true
+common_filemanager_packages:
+  - yazi
+  - ffmpeg
+  - 7zip
+  - resvg
+  - imagemagick
+  - chafa
+
+# Development tools
+common_dev_enabled: false
+common_dev_packages:
+  - chezmoi
+  - mise
+  - stylua
+  - shfmt
+  - luarocks
+  - xh
+
+# Terminal multiplexer
+common_terminal_enabled: true
+common_terminal_packages:
+  - zellij
+
+# Docker
+common_docker_enabled: false
+common_docker_packages:
+  - docker
+  - docker-compose
+  - lazydocker
+
+# Audio (pipewire, no GUI)
+common_audio_enabled: false
+common_audio_packages:
+  - pipewire
+  - pipewire-pulse
+  - wireplumber
+  - alsa-utils
+
+# i3 window manager (Xorg)
+common_i3_enabled: false
+common_i3_packages:
+  - xorg-server
+  - xorg-xinit
+  - xorg-xrandr
+  - xorg-xset
+  - xorg-setxkbmap
+  - i3-wm
+  - polybar
+  - rofi
+  - wezterm
+  - xclip
+  - flameshot
+
+# Fonts
+common_fonts_enabled: true
+common_fonts_packages:
+  - ttf-jetbrains-mono-nerd
+  - ttf-nerd-fonts-symbols-mono
+  - noto-fonts-emoji
+
+# AUR packages (requires yay to be installed first)
+common_aur_enabled: false
+common_aur_packages:
+  - shellcheck-bin
+  - i3lock-color
