@@ -87,10 +87,19 @@
   when: common_docker_enabled | bool
   tags: [packages, docker]
 
-- name: Enable docker socket
+- name: Enable and start docker socket
   ansible.builtin.systemd:
     name: docker.socket
     enabled: true
+    state: started
+  when: common_docker_enabled | bool
+  tags: [docker]
+
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: true
   when: common_docker_enabled | bool
   tags: [docker]
 
@@ -100,6 +109,19 @@
     state: present
   when: common_audio_enabled | bool
   tags: [packages, audio]
+
+- name: Enable pipewire user services
+  become: false
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    scope: user
+  loop:
+    - pipewire.socket
+    - pipewire-pulse.socket
+    - wireplumber.service
+  when: common_audio_enabled | bool
+  tags: [audio]
 
 - name: Install i3 packages
   community.general.pacman:
