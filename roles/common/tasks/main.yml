@@ -119,8 +119,18 @@
   when: common_audio_enabled | bool
   tags: [packages, audio]
 
+- name: Get target user info
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  when: common_audio_enabled | bool
+  tags: [audio]
+
 - name: Enable pipewire user services
-  become: false
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ getent_passwd[ansible_env.SUDO_USER | default(ansible_user_id)][1] }}"
   ansible.builtin.systemd:
     name: "{{ item }}"
     enabled: true
