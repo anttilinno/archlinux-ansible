@@ -1,0 +1,36 @@
+---
+# Post-install package configuration
+# Edit true/false to enable/disable package groups
+
+# CLI tools (zoxide, fzf, fd, eza, bat, ripgrep, less, jq, unzip, btop, cyme)
+common_cli_enabled: true
+
+# Shell (zsh, starship)
+common_shell_enabled: true
+
+# Git tools (git, lazygit, github-cli)
+common_git_enabled: true
+
+# File manager (yazi + deps)
+common_filemanager_enabled: true
+
+# Terminal multiplexer (zellij)
+common_terminal_enabled: true
+
+# Fonts (jetbrains-mono-nerd, nerd-fonts-symbols, noto-emoji)
+common_fonts_enabled: true
+
+# Development tools (chezmoi, mise, stylua, shfmt, luarocks, xh)
+common_dev_enabled: false
+
+# Docker (docker, docker-compose, lazydocker)
+common_docker_enabled: false
+
+# Audio/pipewire (pipewire, pipewire-pulse, wireplumber, alsa-utils)
+common_audio_enabled: false
+
+# i3 window manager (xorg, i3-wm, polybar, rofi, wezterm, xclip, flameshot)
+common_i3_enabled: false
+
+# AUR packages (shellcheck-bin, i3lock-color)
+common_aur_enabled: false
