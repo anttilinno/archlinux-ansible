@@ -52,3 +52,12 @@ rm -rf .cache/
 rm -rf ~/.ansible/facts_cache/*
 echo "Clean complete!"
 """
+
+[tasks.wifi]
+description = "Connect to WiFi network"
+run = """
+read -p "SSID: " ssid
+read -sp "Password: " pass
+echo ""
+nmcli device wifi connect "$ssid" password "$pass"
+"""
