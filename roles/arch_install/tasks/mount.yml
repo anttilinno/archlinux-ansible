@@ -33,16 +33,16 @@
     state: mounted
   when: arch_install_boot_mode == 'uefi'
 
-- name: Ensure /mnt/boot/efi exists (UEFI)
+- name: Ensure /mnt/boot exists (UEFI)
   ansible.builtin.file:
-    path: /mnt/boot/efi
+    path: /mnt/boot
     state: directory
     mode: '0755'
   when: arch_install_boot_mode == 'uefi'
 
-- name: Mount EFI partition (UEFI)
+- name: Mount EFI partition at /boot (UEFI)
   ansible.posix.mount:
-    path: /mnt/boot/efi
+    path: /mnt/boot
     src: "{{ arch_install_part_prefix }}1"
     fstype: vfat
     opts: "umask=0077"
