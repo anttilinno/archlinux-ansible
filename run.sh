@@ -5,9 +5,10 @@ cd "$(dirname "$0")" || exit 1
 
 case "${1:-site}" in
   install)
-    # Stage 0: Install from live ISO
+    # Stage 0: Install from live ISO (always repartitions disk)
     ANSIBLE_HOST_KEY_CHECKING=False \
-    ansible-playbook -i inventories/install/hosts.ini playbooks/install-arch.yml --ask-pass "${@:2}"
+    ansible-playbook -i inventories/install/hosts.ini playbooks/install-arch.yml \
+      -e "arch_install_force_repartition=true" --ask-pass "${@:2}"
     ;;
   site|"")
     # Stage 1: Post-install provisioning (default)
