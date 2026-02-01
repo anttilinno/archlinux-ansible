@@ -24,6 +24,7 @@ mise run provision
 - [Quickstart Guide](docs/quickstart.md) - Get up and running
 - [Overview](docs/overview.md) - Architecture and concepts
 - [Configuration](docs/configuration.md) - All variables and options
+- [Machine Management](docs/machine-management.md) - Managing multiple machines
 
 ## Requirements
 
