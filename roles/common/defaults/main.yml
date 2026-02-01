@@ -79,6 +79,7 @@ common_i3_packages:
   - xorg-xset
   - xorg-setxkbmap
   - i3-wm
+  - picom
   - polybar
   - rofi
   - wezterm
