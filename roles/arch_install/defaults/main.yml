@@ -24,9 +24,9 @@ arch_install_root_password_hash: '!*'  # Locked by default
 arch_install_force_repartition: false
 arch_install_state_marker: /mnt/root/.ansible-stage0-done
 
-# Partition layout
+# Partition layout (use MiB for consistency)
 arch_install_efi_size: 512MiB  # UEFI only
-arch_install_swap_size: 4GiB
+arch_install_swap_size: 4096MiB
 
 # Package set (core - always installed)
 arch_install_base_packages:
