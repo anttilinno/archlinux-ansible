@@ -48,13 +48,19 @@
         - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
     # UEFI: GPT with EFI + swap + root (using raw parted - module has GPT flag bugs)
+    - name: Calculate UEFI partition sizes
+      ansible.builtin.set_fact:
+        arch_install_efi_size_mb: "{{ arch_install_efi_size | regex_replace('[^0-9]', '') | int }}"
+        arch_install_swap_size_mb: "{{ arch_install_swap_size | regex_replace('[^0-9]', '') | int }}"
+      when: arch_install_boot_mode == 'uefi'
+
     - name: Create UEFI partitions
       ansible.builtin.shell: |
         parted -s {{ arch_install_disk }} mklabel gpt
-        parted -s {{ arch_install_disk }} mkpart primary fat32 1MiB {{ arch_install_efi_size }}
+        parted -s {{ arch_install_disk }} mkpart primary fat32 1MiB {{ arch_install_efi_size_mb }}MiB
         parted -s {{ arch_install_disk }} set 1 esp on
-        parted -s {{ arch_install_disk }} mkpart primary linux-swap {{ arch_install_efi_size }} {{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB
-        parted -s {{ arch_install_disk }} mkpart primary ext4 {{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB 100%
+        parted -s {{ arch_install_disk }} mkpart primary linux-swap {{ arch_install_efi_size_mb }}MiB {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB
+        parted -s {{ arch_install_disk }} mkpart primary ext4 {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB 100%
       when:
         - arch_install_boot_mode == 'uefi'
         - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
