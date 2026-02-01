@@ -1,6 +1,15 @@
 ---
 - name: Partitioning block
   block:
+    - name: Unmount any mounted partitions on disk
+      ansible.builtin.shell: |
+        swapoff -a 2>/dev/null || true
+        umount -R /mnt 2>/dev/null || true
+        umount {{ arch_install_disk }}* 2>/dev/null || true
+      when: arch_install_force_repartition | bool
+      changed_when: false
+      failed_when: false
+
     - name: Wipe disk signatures when force repartition
       ansible.builtin.command: wipefs -af {{ arch_install_disk }}
       when: arch_install_force_repartition | bool
