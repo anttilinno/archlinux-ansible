@@ -7,11 +7,11 @@ case "${1:-site}" in
   install)
     # Stage 0: Install from live ISO
     ANSIBLE_HOST_KEY_CHECKING=False \
-    ansible-playbook -i inventories/lab/hosts.ini playbooks/install-arch.yml --ask-pass "${@:2}"
+    ansible-playbook -i inventories/install/hosts.ini playbooks/install-arch.yml --ask-pass "${@:2}"
     ;;
   site|"")
     # Stage 1: Post-install provisioning (default)
-    ansible-playbook -i inventories/prod/hosts.ini site.yml "${@:2}"
+    ansible-playbook -i inventories/provision/hosts.ini site.yml "${@:2}"
     ;;
   *)
     echo "Usage: $0 [install|site] [extra ansible args]"

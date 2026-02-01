@@ -44,7 +44,6 @@ common_filemanager_packages:
 common_dev_enabled: false
 common_dev_packages:
   - chezmoi
-  - mise
   - stylua
   - shfmt
   - luarocks

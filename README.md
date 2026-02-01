@@ -1,6 +1,6 @@
-# Ansible T60 Bootstrap & Provisioning
+# Arch Linux Ansible
 
-A comprehensive Ansible project for bare metal Arch Linux installation and post-installation provisioning on a ThinkPad T60.
+Ansible project for bare metal Arch Linux installation and post-installation provisioning on laptops and desktops.
 
 ## Project Structure
 
@@ -10,11 +10,11 @@ A comprehensive Ansible project for bare metal Arch Linux installation and post-
 ├── requirements.yml         # Galaxy dependencies
 ├── site.yml                 # Main post-install playbook
 ├── inventories/
-│   ├── lab/                 # ISO environment inventory
+│   ├── install/                 # ISO environment inventory
 │   │   ├── hosts.ini
 │   │   └── group_vars/
 │   │       └── all.yml
-│   └── prod/                # Post-install inventory
+│   └── provision/                # Post-install inventory
 │       ├── hosts.ini
 │       └── group_vars/
 │           └── all.yml
@@ -46,8 +46,8 @@ A comprehensive Ansible project for bare metal Arch Linux installation and post-
 - **`common`**: Baseline configuration and packages for all systems
 
 ### Inventories
-- **`lab`**: Used when connecting to the Arch ISO (root user, password auth)
-- **`prod`**: Used after installation (admin user, key-based auth)
+- **`install`**: Used when connecting to the Arch ISO (root user, password auth)
+- **`provision`**: Used after installation (admin user, key-based auth)
 
 ## Prerequisites
 
@@ -60,7 +60,7 @@ sudo pacman -S ansible
 ansible-galaxy install -r requirements.yml
 ```
 
-### On the Target (T60)
+### On the Target
 1. Boot Arch Linux ISO
 2. **Increase tmpfs for Ansible** (required for 4GB RAM systems):
    - At boot menu, press **TAB** and append: `tmpfs.size=4G`
@@ -81,7 +81,7 @@ ansible-galaxy install -r requirements.yml
 ```bash
 # Run the installer from the ISO environment
 ANSIBLE_HOST_KEY_CHECKING=False \
-ansible-playbook -i inventories/lab/hosts.ini \
+ansible-playbook -i inventories/install/hosts.ini \
   playbooks/install-arch.yml \
   --ask-pass
 ```
@@ -100,21 +100,21 @@ After the system reboots, apply post-installation configuration:
 
 ```bash
 # Test connectivity
-ansible -i inventories/prod/hosts.ini all -m ping
+ansible -i inventories/provision/hosts.ini all -m ping
 
 # Run post-install provisioning
-ansible-playbook -i inventories/prod/hosts.ini site.yml
+ansible-playbook -i inventories/provision/hosts.ini site.yml
 ```
 
 ## Configuration
 
 ### Installation Variables
 
-Edit `inventories/lab/group_vars/all.yml` or pass via command line:
+Edit `inventories/install/group_vars/all.yml` or pass via command line:
 
 ```yaml
 arch_install_disk: /dev/sda              # Target disk
-arch_install_hostname: t60               # System hostname
+arch_install_hostname: archbox           # System hostname
 arch_install_admin_user: antti           # Admin username
 arch_install_timezone: Europe/Tallinn    # Timezone
 ```
@@ -123,7 +123,7 @@ See `roles/arch_install/README.md` for all available variables.
 
 ### Post-Install Variables
 
-Edit `inventories/prod/group_vars/all.yml`:
+Edit `inventories/provision/group_vars/all.yml`:
 
 ```yaml
 common_packages:

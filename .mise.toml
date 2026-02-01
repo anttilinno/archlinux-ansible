@@ -1,0 +1,54 @@
+[tasks.install]
+description = "Install Ansible and required collections"
+run = "ansible-galaxy install -r requirements.yml"
+
+[tasks.lint]
+description = "Run yamllint and ansible-lint"
+run = """
+echo "Running yamllint..."
+yamllint .
+echo ""
+echo "Running ansible-lint..."
+ansible-lint
+"""
+
+[tasks.syntax]
+description = "Check playbook syntax"
+run = """
+ansible-playbook --syntax-check playbooks/install-arch.yml
+ansible-playbook --syntax-check site.yml
+"""
+
+[tasks.test]
+description = "Run all quality checks"
+depends = ["syntax", "lint"]
+
+[tasks.ping]
+description = "Test connectivity to provision hosts"
+run = "ansible -i inventories/provision/hosts.ini all -m ansible.builtin.ping"
+
+[tasks.check]
+description = "Run provisioning in check mode (dry run)"
+run = "ansible-playbook -i inventories/provision/hosts.ini site.yml --check"
+
+[tasks.provision]
+description = "Run post-install provisioning"
+run = "ansible-playbook -i inventories/provision/hosts.ini site.yml"
+
+[tasks.install-arch]
+description = "Run Arch installation (DESTRUCTIVE)"
+run = """
+echo "WARNING: This will partition and format the target disk!"
+echo "Press Ctrl+C within 5 seconds to abort..."
+sleep 5
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventories/install/hosts.ini playbooks/install-arch.yml --ask-pass
+"""
+
+[tasks.clean]
+description = "Clean temporary files and caches"
+run = """
+find . -name "*.retry" -delete
+rm -rf .cache/
+rm -rf ~/.ansible/facts_cache/*
+echo "Clean complete!"
+"""

@@ -8,7 +8,7 @@ arch_install_boot_mode: bios # bios or uefi
 arch_install_wifi: true      # install wifi packages (networkmanager, wpa_supplicant)
 
 # System configuration
-arch_install_hostname: t60
+arch_install_hostname: archbox
 arch_install_locale: en_US.UTF-8
 arch_install_timezone: Europe/Tallinn
 arch_install_keymap: us
@@ -42,6 +42,7 @@ arch_install_base_packages:
   - zsh
   - ansible
   - git
+  - mise
 
 # Wifi packages
 arch_install_wifi_packages:
@@ -65,7 +66,8 @@ arch_install_gpu_packages:
     - mesa
     - xf86-video-amdgpu
   nvidia:
-    - nvidia
+    - mesa
+    - nvidia-lts
     - nvidia-utils
   none:
     - mesa

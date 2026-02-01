@@ -3,7 +3,7 @@
 # Override arch_install role defaults here if needed
 
 # System
-arch_install_hostname: t60
+arch_install_hostname: archbox
 arch_install_disk: /dev/vda
 arch_install_admin_user: antti
 

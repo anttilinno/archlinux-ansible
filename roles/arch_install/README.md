@@ -18,7 +18,7 @@ A comprehensive Ansible role for bare metal Arch Linux installation on legacy BI
 - `arch_install_root_fs_label`: Filesystem label for root partition (default: `archroot`)
 
 ### System Configuration
-- `arch_install_hostname`: System hostname (default: `t60`)
+- `arch_install_hostname`: System hostname (default: `archbox`)
 - `arch_install_locale`: System locale (default: `en_US.UTF-8`)
 - `arch_install_timezone`: System timezone (default: `Europe/Tallinn`)
 - `arch_install_keymap`: Console keymap (default: `us`)
@@ -66,8 +66,8 @@ ansible-galaxy collection install community.general ansible.posix
 
 ```yaml
 ---
-- name: Install Arch Linux on T60
-  hosts: t60_iso
+- name: Install Arch Linux from ISO
+  hosts: target
   become: true
   gather_facts: false
 
@@ -82,8 +82,8 @@ ansible-galaxy collection install community.general ansible.posix
   roles:
     - role: arch_install
       arch_install_disk: /dev/sda
-      arch_install_hostname: t60
-      arch_install_admin_user: antti
+      arch_install_hostname: myhost
+      arch_install_admin_user: myuser
 ```
 
 ## Tags

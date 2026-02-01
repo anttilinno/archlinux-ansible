@@ -4,27 +4,29 @@ This directory contains playbooks for various stages of system lifecycle.
 
 ## Available Playbooks
 
-### install-arch-t60.yml
-**Purpose**: Bare metal Arch Linux installation from ISO environment  
-**Target**: `t60_iso` (Arch ISO via SSH as root)  
-**Inventory**: `inventories/lab/hosts.ini`  
+### install-arch.yml
+**Purpose**: Bare metal Arch Linux installation from ISO environment
+**Target**: `target` (Arch ISO via SSH as root)
+**Inventory**: `inventories/install/hosts.ini`
 **Destructive**: YES - partitions and formats disk
 
 **Usage**:
 ```bash
+./run.sh install
+# or
 ANSIBLE_HOST_KEY_CHECKING=False \
-ansible-playbook -i inventories/lab/hosts.ini \
-  playbooks/install-arch-t60.yml \
+ansible-playbook -i inventories/install/hosts.ini \
+  playbooks/install-arch.yml \
   --ask-pass
 ```
 
 **What it does**:
-- Partitions disk (MBR: swap + root)
+- Partitions disk (MBR: swap + root, or GPT for UEFI)
 - Formats filesystems (swap + ext4)
 - Installs base Arch Linux system
 - Configures locale, timezone, hostname
 - Sets up users and SSH keys
-- Installs Syslinux bootloader
+- Installs bootloader (syslinux for BIOS, limine for UEFI)
 - Reboots into new system
 
 **Safety features**:
@@ -47,45 +49,25 @@ See `roles/arch_install/defaults/main.yml` for all options.
 - `bootloader`: Bootloader installation
 - `finalize`: Cleanup and reboot
 
-## Best Practices
-
-1. Always test in a safe environment first
-2. Review variables before running
-3. Use `--check` mode when possible
-4. Use `--tags` to run specific sections
-5. Keep playbooks focused and modular
-6. Use roles for reusable components
-
-## Adding New Playbooks
-
-When adding new playbooks:
-1. Follow the naming convention: `verb-target.yml`
-2. Add comprehensive comments at the top
-3. Use pre_tasks and post_tasks appropriately
-4. Document all required variables
-5. Add entry to this README
-6. Test thoroughly before committing
-
 ## Examples
 
 Run only partitioning:
 ```bash
-ansible-playbook -i inventories/lab/hosts.ini \
-  playbooks/install-arch-t60.yml \
+ansible-playbook -i inventories/install/hosts.ini \
+  playbooks/install-arch.yml \
   --tags partitioning
 ```
 
 Skip bootloader installation:
 ```bash
-ansible-playbook -i inventories/lab/hosts.ini \
-  playbooks/install-arch-t60.yml \
+ansible-playbook -i inventories/install/hosts.ini \
+  playbooks/install-arch.yml \
   --skip-tags bootloader
 ```
 
 Use different disk:
 ```bash
-ansible-playbook -i inventories/lab/hosts.ini \
-  playbooks/install-arch-t60.yml \
+ansible-playbook -i inventories/install/hosts.ini \
+  playbooks/install-arch.yml \
   -e "arch_install_disk=/dev/nvme0n1"
 ```
-

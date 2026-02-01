@@ -1,8 +1,8 @@
 ---
-# Post-installation provisioning for T60
+# Post-installation provisioning
 # Run this after the system has been installed and rebooted
-- name: Post-install provisioning for T60
-  hosts: t60
+- name: Post-install provisioning
+  hosts: all
   become: true
   gather_facts: true
 

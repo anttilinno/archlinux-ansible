@@ -1,4 +1,7 @@
 ---
+# Machine type: laptop or desktop
+machine_type: laptop
+
 # Post-install package configuration
 # Edit true/false to enable/disable package groups
 
@@ -20,7 +23,7 @@ common_terminal_enabled: true
 # Fonts (jetbrains-mono-nerd, nerd-fonts-symbols, noto-emoji)
 common_fonts_enabled: true
 
-# Development tools (chezmoi, mise, stylua, shfmt, luarocks, xh)
+# Development tools (chezmoi, stylua, shfmt, luarocks, xh)
 common_dev_enabled: false
 
 # Docker (docker, docker-compose, lazydocker)

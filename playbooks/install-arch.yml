@@ -1,8 +1,8 @@
 ---
 # WARNING: Destructive if arch_install_force_repartition=true
 # This playbook installs Arch Linux on bare metal from the ISO environment
-- name: Install Arch Linux on T60 from ISO over SSH
-  hosts: t60_iso
+- name: Install Arch Linux from ISO over SSH
+  hosts: target
   become: true
   gather_facts: false
 
@@ -39,6 +39,6 @@
       ansible.builtin.debug:
         msg: >-
           Installation complete!
-          After reboot, connect to the system using the 'prod' inventory.
+          After reboot, connect to the system using the 'provision' inventory.
       tags:
         - always
