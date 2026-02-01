@@ -1,6 +1,10 @@
 ---
 - name: Partitioning block
   block:
+    - name: Wipe disk signatures when force repartition
+      ansible.builtin.command: wipefs -af {{ arch_install_disk }}
+      when: arch_install_force_repartition | bool
+
     - name: Detect current partition table type
       ansible.builtin.command: lsblk -no PTTYPE {{ arch_install_disk }}
       register: arch_install_pttype
@@ -92,7 +96,7 @@
     - name: Create swap filesystem (BIOS)
       community.general.filesystem:
         fstype: swap
-        dev: "{{ arch_install_disk }}1"
+        dev: "{{ arch_install_part_prefix }}1"
         force: "{{ arch_install_force_repartition | bool }}"
       when:
         - arch_install_boot_mode == 'bios'
@@ -101,7 +105,7 @@
     - name: Create ext4 root filesystem (BIOS)
       community.general.filesystem:
         fstype: ext4
-        dev: "{{ arch_install_disk }}2"
+        dev: "{{ arch_install_part_prefix }}2"
         opts: "-L {{ arch_install_root_fs_label }}"
         force: "{{ arch_install_force_repartition | bool }}"
       when:
@@ -112,7 +116,7 @@
     - name: Create FAT32 EFI filesystem (UEFI)
       community.general.filesystem:
         fstype: vfat
-        dev: "{{ arch_install_disk }}1"
+        dev: "{{ arch_install_part_prefix }}1"
         opts: "-F 32"
         force: "{{ arch_install_force_repartition | bool }}"
       when:
@@ -122,7 +126,7 @@
     - name: Create swap filesystem (UEFI)
       community.general.filesystem:
         fstype: swap
-        dev: "{{ arch_install_disk }}2"
+        dev: "{{ arch_install_part_prefix }}2"
         force: "{{ arch_install_force_repartition | bool }}"
       when:
         - arch_install_boot_mode == 'uefi'
@@ -131,7 +135,7 @@
     - name: Create ext4 root filesystem (UEFI)
       community.general.filesystem:
         fstype: ext4
-        dev: "{{ arch_install_disk }}3"
+        dev: "{{ arch_install_part_prefix }}3"
         opts: "-L {{ arch_install_root_fs_label }}"
         force: "{{ arch_install_force_repartition | bool }}"
       when:

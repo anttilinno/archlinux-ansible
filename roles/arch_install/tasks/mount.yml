@@ -9,7 +9,7 @@
 - name: Mount root partition (BIOS)
   ansible.posix.mount:
     path: /mnt
-    src: "{{ arch_install_disk }}2"
+    src: "{{ arch_install_part_prefix }}2"
     fstype: ext4
     opts: "{{ arch_install_root_mount_opts }}"
     state: mounted
@@ -18,7 +18,7 @@
 - name: Configure swap (BIOS)
   ansible.posix.mount:
     path: none
-    src: "{{ arch_install_disk }}1"
+    src: "{{ arch_install_part_prefix }}1"
     fstype: swap
     state: present
   when: arch_install_boot_mode == 'bios'
@@ -27,7 +27,7 @@
 - name: Mount root partition (UEFI)
   ansible.posix.mount:
     path: /mnt
-    src: "{{ arch_install_disk }}3"
+    src: "{{ arch_install_part_prefix }}3"
     fstype: ext4
     opts: "{{ arch_install_root_mount_opts }}"
     state: mounted
@@ -43,7 +43,7 @@
 - name: Mount EFI partition (UEFI)
   ansible.posix.mount:
     path: /mnt/boot/efi
-    src: "{{ arch_install_disk }}1"
+    src: "{{ arch_install_part_prefix }}1"
     fstype: vfat
     opts: "umask=0077"
     state: mounted
@@ -52,7 +52,7 @@
 - name: Configure swap (UEFI)
   ansible.posix.mount:
     path: none
-    src: "{{ arch_install_disk }}2"
+    src: "{{ arch_install_part_prefix }}2"
     fstype: swap
     state: present
   when: arch_install_boot_mode == 'uefi'

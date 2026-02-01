@@ -1,13 +1,13 @@
 ---
 - name: Get PARTUUID of root partition (BIOS)
-  ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_disk }}2
+  ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_part_prefix }}2
   register: arch_install_root_partuuid
   changed_when: false
   check_mode: false
   when: arch_install_boot_mode == 'bios'
 
 - name: Get PARTUUID of root partition (UEFI)
-  ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_disk }}3
+  ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_part_prefix }}3
   register: arch_install_root_partuuid_uefi
   changed_when: false
   check_mode: false

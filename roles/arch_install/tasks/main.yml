@@ -1,5 +1,11 @@
 ---
 # Main task file that orchestrates the Arch Linux installation
+- name: Set partition device prefix (handles NVMe naming)
+  ansible.builtin.set_fact:
+    arch_install_part_prefix: "{{ arch_install_disk }}{{ 'p' if arch_install_disk is regex('.*[0-9]$') else '' }}"
+  tags:
+    - always
+
 - name: Sanity checks
   ansible.builtin.import_tasks: sanity_checks.yml
   tags:
