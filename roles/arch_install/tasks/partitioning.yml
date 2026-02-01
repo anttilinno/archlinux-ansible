@@ -47,47 +47,14 @@
         - arch_install_boot_mode == 'bios'
         - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
-    # UEFI: GPT with EFI + swap + root
-    - name: Create GPT partition table (UEFI)
-      ansible.builtin.command: parted -s {{ arch_install_disk }} mklabel gpt
-      when:
-        - arch_install_boot_mode == 'uefi'
-        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
-        - arch_install_pttype.stdout | trim != 'gpt'
-
-    - name: Create EFI partition (UEFI)
-      community.general.parted:
-        device: "{{ arch_install_disk }}"
-        number: 1
-        part_start: 1MiB
-        part_end: "{{ arch_install_efi_size }}"
-        fs_type: fat32
-        flags: [esp]
-        state: present
-      when:
-        - arch_install_boot_mode == 'uefi'
-        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
-
-    - name: Create swap partition (UEFI)
-      community.general.parted:
-        device: "{{ arch_install_disk }}"
-        number: 2
-        part_start: "{{ arch_install_efi_size }}"
-        part_end: "{{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB"
-        fs_type: linux-swap
-        state: present
-      when:
-        - arch_install_boot_mode == 'uefi'
-        - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
-
-    - name: Create root partition (UEFI)
-      community.general.parted:
-        device: "{{ arch_install_disk }}"
-        number: 3
-        part_start: "{{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB"
-        part_end: 100%
-        fs_type: ext4
-        state: present
+    # UEFI: GPT with EFI + swap + root (using raw parted - module has GPT flag bugs)
+    - name: Create UEFI partitions
+      ansible.builtin.shell: |
+        parted -s {{ arch_install_disk }} mklabel gpt
+        parted -s {{ arch_install_disk }} mkpart primary fat32 1MiB {{ arch_install_efi_size }}
+        parted -s {{ arch_install_disk }} set 1 esp on
+        parted -s {{ arch_install_disk }} mkpart primary linux-swap {{ arch_install_efi_size }} {{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB
+        parted -s {{ arch_install_disk }} mkpart primary ext4 {{ arch_install_efi_size | regex_replace('([0-9]+).*', '\\1') | int + arch_install_swap_size | regex_replace('([0-9]+).*', '\\1') | int }}MiB 100%
       when:
         - arch_install_boot_mode == 'uefi'
         - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
