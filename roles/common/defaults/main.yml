@@ -66,6 +66,7 @@ common_audio_enabled: false
 common_audio_packages:
   - pipewire
   - pipewire-pulse
+  - pipewire-alsa
   - wireplumber
   - alsa-utils
   - pavucontrol
