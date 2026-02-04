@@ -24,16 +24,19 @@ common_terminal_enabled: true
 common_fonts_enabled: true
 
 # Development tools (chezmoi, stylua, shfmt, luarocks, xh)
-common_dev_enabled: false
+common_dev_enabled: true
 
 # Docker (docker, docker-compose, lazydocker)
-common_docker_enabled: false
+common_docker_enabled: true
 
 # Audio/pipewire (pipewire, pipewire-pulse, wireplumber, alsa-utils)
-common_audio_enabled: false
+common_audio_enabled: true
 
 # i3 window manager (xorg, i3-wm, polybar, rofi, wezterm, xclip, flameshot)
-common_i3_enabled: false
+common_i3_enabled: true
 
-# AUR packages (shellcheck-bin, i3lock-color)
-common_aur_enabled: false
+# AUR packages (shellcheck-bin, i3lock-color, zen-browser-bin)
+common_aur_enabled: true
+
+# Office/productivity apps (audacity, libreoffice, obsidian, slack)
+common_office_enabled: true
