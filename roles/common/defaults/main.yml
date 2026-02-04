@@ -86,6 +86,7 @@ common_i3_packages:
   - wezterm
   - xclip
   - flameshot
+  - feh
   - x11-ssh-askpass
 
 # Fonts
