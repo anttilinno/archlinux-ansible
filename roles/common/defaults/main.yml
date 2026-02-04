@@ -48,6 +48,9 @@ common_dev_packages:
   - shfmt
   - luarocks
   - xh
+  - nodejs
+  - npm
+  - pnpm
 
 # Terminal multiplexer
 common_terminal_enabled: true
