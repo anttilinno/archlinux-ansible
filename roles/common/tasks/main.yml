@@ -1,6 +1,12 @@
 ---
 # Common baseline tasks
 
+- name: Upgrade all packages
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+  tags: [packages, upgrade]
+
 - name: Install base-devel
   community.general.pacman:
     name: base-devel
