@@ -109,6 +109,7 @@ common_fonts_packages:
 # Office/productivity apps (uses yay for AUR packages)
 common_office_enabled: false
 common_office_packages:
+  - aerc
   - audacity
   - libreoffice-fresh
   - obsidian-bin
