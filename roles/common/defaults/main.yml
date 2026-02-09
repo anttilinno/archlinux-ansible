@@ -92,6 +92,13 @@ common_i3_packages:
   - feh
   - x11-ssh-askpass
 
+# Bluetooth
+common_bluetooth_enabled: false
+common_bluetooth_packages:
+  - bluez
+  - bluez-utils
+  - blueman
+
 # Fonts
 common_fonts_enabled: true
 common_fonts_packages:

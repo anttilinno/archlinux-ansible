@@ -43,7 +43,7 @@ mise run test                   # Run all quality checks
 
 ### Package Groups (common role)
 Toggle groups by editing `inventories/provision/group_vars/all.yml`:
-- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop
+- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative)
 - `common_shell_enabled`: zsh, starship
 - `common_git_enabled`: git, lazygit, github-cli
 - `common_filemanager_enabled`: yazi + dependencies

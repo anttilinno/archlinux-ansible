@@ -148,6 +148,21 @@
   when: common_audio_enabled | bool
   tags: [audio]
 
+- name: Install bluetooth packages
+  community.general.pacman:
+    name: "{{ common_bluetooth_packages }}"
+    state: present
+  when: common_bluetooth_enabled | bool
+  tags: [packages, bluetooth]
+
+- name: Enable and start bluetooth service
+  ansible.builtin.systemd:
+    name: bluetooth.service
+    enabled: true
+    state: started
+  when: common_bluetooth_enabled | bool
+  tags: [bluetooth]
+
 - name: Install i3 packages
   community.general.pacman:
     name: "{{ common_i3_packages }}"
