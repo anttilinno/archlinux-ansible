@@ -110,6 +110,9 @@ common_fonts_packages:
 common_devops_enabled: false
 common_devops_packages:
   - aws-cli-v2
+  - kubectl
+  - helm
+  - kubeseal
   - opentofu-bin
 
 # Office/productivity apps (uses yay for AUR packages)
