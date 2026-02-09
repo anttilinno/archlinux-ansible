@@ -106,6 +106,12 @@ common_fonts_packages:
   - ttf-nerd-fonts-symbols-mono
   - noto-fonts-emoji
 
+# DevOps tools (uses yay for AUR packages)
+common_devops_enabled: false
+common_devops_packages:
+  - aws-cli-v2
+  - opentofu-bin
+
 # Office/productivity apps (uses yay for AUR packages)
 common_office_enabled: false
 common_office_packages:

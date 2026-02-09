@@ -41,5 +41,8 @@ common_i3_enabled: true
 # AUR packages (shellcheck-bin, i3lock-color, zen-browser-bin)
 common_aur_enabled: true
 
+# DevOps tools (aws-cli-v2, opentofu-bin)
+common_devops_enabled: true
+
 # Office/productivity apps (audacity, libreoffice, obsidian, slack)
 common_office_enabled: true
