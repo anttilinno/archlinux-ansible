@@ -89,12 +89,15 @@ Each group can be toggled independently:
 | `common_filemanager_enabled` | yazi + dependencies |
 | `common_terminal_enabled` | zellij |
 | `common_fonts_enabled` | JetBrains Mono Nerd, Noto emoji |
-| `common_dev_enabled` | chezmoi, stylua, shfmt, luarocks |
+| `common_dev_enabled` | chezmoi, stylua, shfmt, luarocks, xh, nodejs, npm, pnpm |
 | `common_docker_enabled` | docker, docker-compose, lazydocker |
 | `common_audio_enabled` | pipewire, wireplumber, alsa-utils |
 | `common_i3_enabled` | xorg, i3-wm, polybar, rofi, wezterm |
-| `common_aur_enabled` | shellcheck-bin, i3lock-color, zen-browser |
+| `common_bluetooth_enabled` | bluez, bluez-utils, blueman |
+| `common_devops_enabled` | aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin |
+| `common_virt_enabled` | qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf |
 | `common_office_enabled` | audacity, libreoffice, obsidian, slack |
+| `common_aur_enabled` | shellcheck-bin, i3lock-color, zen-browser |
 
 ## Variable Precedence
 

@@ -6,6 +6,13 @@ Prevent package drift across multiple machines by running provisioning periodica
 
 ### 1. Add host to inventory
 
+Inventory files are gitignored. If starting fresh, copy from templates first:
+
+```bash
+cp inventories/provision/hosts.ini.example inventories/provision/hosts.ini
+cp inventories/provision/group_vars/all.yml.example inventories/provision/group_vars/all.yml
+```
+
 Edit `inventories/provision/hosts.ini`:
 
 ```ini

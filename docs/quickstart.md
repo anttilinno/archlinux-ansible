@@ -20,6 +20,14 @@ For systems with 4GB RAM, increase tmpfs at boot menu (press TAB, append `tmpfs.
 
 ## Step 1: Configure inventory
 
+Copy the `.example` templates and customize:
+
+```bash
+cp inventories/install/hosts.ini.example inventories/install/hosts.ini
+cp inventories/install/group_vars/all.yml.example inventories/install/group_vars/all.yml
+cp inventories/install/group_vars/target.yml.example inventories/install/group_vars/target.yml
+```
+
 Edit `inventories/install/hosts.ini`:
 
 ```ini
@@ -68,6 +76,14 @@ Or from controller:
 ```
 
 ## Step 4: Customize packages
+
+Copy the provisioning inventory templates:
+
+```bash
+cp inventories/provision/hosts.ini.example inventories/provision/hosts.ini
+cp inventories/provision/group_vars/all.yml.example inventories/provision/group_vars/all.yml
+cp inventories/provision/host_vars/archbox.yml.example inventories/provision/host_vars/<your-hostname>.yml
+```
 
 Edit `inventories/provision/group_vars/all.yml` to enable/disable package groups:
 

@@ -58,7 +58,7 @@ Set in `inventories/install/group_vars/all.yml` or pass with `-e`.
 
 ## Provisioning Variables
 
-Set in `inventories/provision/group_vars/all.yml`.
+Set in `inventories/provision/group_vars/all.yml`. Inventory files are gitignored — copy from `*.example` templates first.
 
 ### Machine Type
 
@@ -76,12 +76,15 @@ Set in `inventories/provision/group_vars/all.yml`.
 | `common_filemanager_enabled` | `true` | yazi, ffmpeg, 7zip, resvg, imagemagick, chafa |
 | `common_terminal_enabled` | `true` | zellij |
 | `common_fonts_enabled` | `true` | ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols-mono, noto-fonts-emoji |
-| `common_dev_enabled` | `false` | chezmoi, stylua, shfmt, luarocks, xh |
+| `common_dev_enabled` | `false` | chezmoi, stylua, shfmt, luarocks, xh, nodejs, npm, pnpm |
 | `common_docker_enabled` | `false` | docker, docker-compose, lazydocker |
+| `common_devops_enabled` | `false` | aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin |
 | `common_audio_enabled` | `false` | pipewire, pipewire-pulse, wireplumber, alsa-utils, pavucontrol |
+| `common_bluetooth_enabled` | `false` | bluez, bluez-utils, blueman |
 | `common_i3_enabled` | `false` | xorg-server, xorg-xinit, i3-wm, polybar, rofi, wezterm, xclip, flameshot |
-| `common_aur_enabled` | `false` | shellcheck-bin, i3lock-color, zen-browser-bin |
+| `common_virt_enabled` | `false` | qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf |
 | `common_office_enabled` | `false` | audacity, libreoffice-fresh, obsidian-bin, slack-desktop |
+| `common_aur_enabled` | `false` | shellcheck-bin, i3lock-color, zen-browser-bin |
 
 ## Task Runner Commands
 
