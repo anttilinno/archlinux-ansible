@@ -37,6 +37,8 @@ mise run test                   # Run all quality checks
 - **install/**: Used during Stage 0 (root user on Arch ISO, password auth)
 - **provision/**: Used during Stage 1 (admin user, local connection by default)
 
+Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitignored. Tracked `*.example` files serve as templates — copy them without the `.example` suffix and customize locally.
+
 ### Roles
 - **arch_install**: Complete Arch installation (partitioning, pacstrap, bootloader). Supports BIOS/UEFI, Intel/AMD CPUs, Intel/AMD/NVIDIA GPUs.
 - **common**: Package groups and services. Each group is toggleable via `common_*_enabled` variables in `inventories/provision/group_vars/all.yml`.
