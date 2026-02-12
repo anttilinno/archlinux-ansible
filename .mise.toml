@@ -1,3 +1,7 @@
+[tasks.setup]
+description = "Interactive wizard to configure provisioning inventory"
+run = "bash scripts/setup-wizard.sh"
+
 [tasks.install]
 description = "Install Ansible and required collections"
 run = "ansible-galaxy install -r requirements.yml"

@@ -8,6 +8,7 @@
 inventories/*/hosts.ini
 inventories/*/group_vars/*.yml
 inventories/*/host_vars/*.yml
+inventories/*/backup-*/
 
 # Python
 __pycache__/
