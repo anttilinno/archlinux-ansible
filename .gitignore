@@ -4,6 +4,11 @@
 .cache/
 ~/.ansible/facts_cache/
 
+# Inventory files (machine-specific, use *.example as templates)
+inventories/*/hosts.ini
+inventories/*/group_vars/*.yml
+inventories/*/host_vars/*.yml
+
 # Python
 __pycache__/
 *.py[cod]

@@ -44,5 +44,8 @@ common_aur_enabled: true
 # DevOps tools (aws-cli-v2, opentofu-bin)
 common_devops_enabled: true
 
+# Virtualization (qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf)
+common_virt_enabled: true
+
 # Office/productivity apps (audacity, libreoffice, obsidian, slack)
 common_office_enabled: true
