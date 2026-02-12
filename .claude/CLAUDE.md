@@ -55,6 +55,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `common_audio_enabled`: pipewire, wireplumber, alsa-utils
 - `common_i3_enabled`: xorg, i3-wm, polybar, rofi, wezterm
 - `common_aur_enabled`: shellcheck-bin, i3lock-color, zen-browser
+- `common_virt_enabled`: qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf
 - `common_office_enabled`: audacity, libreoffice, obsidian, slack
 
 ### Variable Precedence

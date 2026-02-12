@@ -191,6 +191,29 @@
   when: common_office_enabled | bool
   tags: [packages, office]
 
+- name: Install virtualization packages
+  community.general.pacman:
+    name: "{{ common_virt_packages }}"
+    state: present
+  when: common_virt_enabled | bool
+  tags: [packages, virt]
+
+- name: Enable and start libvirtd socket
+  ansible.builtin.systemd:
+    name: libvirtd.socket
+    enabled: true
+    state: started
+  when: common_virt_enabled | bool
+  tags: [virt]
+
+- name: Add user to libvirt group
+  ansible.builtin.user:
+    name: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    groups: libvirt
+    append: true
+  when: common_virt_enabled | bool
+  tags: [virt]
+
 - name: Install AUR packages
   become: true
   become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
