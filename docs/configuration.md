@@ -74,7 +74,7 @@ Set in `inventories/provision/group_vars/all.yml`. Inventory files are gitignore
 | `common_shell_enabled` | `true` | zsh, starship |
 | `common_git_enabled` | `true` | git, lazygit, github-cli |
 | `common_filemanager_enabled` | `true` | yazi, ffmpeg, 7zip, resvg, imagemagick, chafa |
-| `common_terminal_enabled` | `true` | zellij |
+| `common_terminal_enabled` | `true` | tmux |
 | `common_fonts_enabled` | `true` | ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols-mono, noto-fonts-emoji |
 | `common_dev_enabled` | `false` | chezmoi, stylua, shfmt, luarocks, xh, nodejs, npm, pnpm |
 | `common_docker_enabled` | `false` | docker, docker-compose, lazydocker |

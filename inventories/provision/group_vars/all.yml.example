@@ -17,7 +17,7 @@ common_git_enabled: true
 # File manager (yazi + deps)
 common_filemanager_enabled: true
 
-# Terminal multiplexer (zellij)
+# Terminal multiplexer (tmux)
 common_terminal_enabled: true
 
 # Fonts (jetbrains-mono-nerd, nerd-fonts-symbols, noto-emoji)

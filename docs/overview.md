@@ -87,7 +87,7 @@ Each group can be toggled independently:
 | `common_shell_enabled` | zsh, starship |
 | `common_git_enabled` | git, lazygit, github-cli |
 | `common_filemanager_enabled` | yazi + dependencies |
-| `common_terminal_enabled` | zellij |
+| `common_terminal_enabled` | tmux |
 | `common_fonts_enabled` | JetBrains Mono Nerd, Noto emoji |
 | `common_dev_enabled` | chezmoi, stylua, shfmt, luarocks, xh, nodejs, npm, pnpm |
 | `common_docker_enabled` | docker, docker-compose, lazydocker |

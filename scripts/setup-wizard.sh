@@ -71,7 +71,7 @@ cli=$(ask_yn      "  CLI tools (zoxide, fzf, bat, ripgrep, btop...)" "true")
 shell=$(ask_yn    "  Shell (zsh, starship)" "true")
 git=$(ask_yn      "  Git tools (git, lazygit, github-cli)" "true")
 fm=$(ask_yn       "  File manager (yazi)" "true")
-terminal=$(ask_yn "  Terminal multiplexer (zellij)" "true")
+terminal=$(ask_yn "  Terminal multiplexer (tmux)" "true")
 fonts=$(ask_yn    "  Fonts (JetBrains Mono Nerd, Noto emoji)" "true")
 dev=$(ask_yn      "  Development tools (chezmoi, stylua, nodejs...)" "false")
 docker=$(ask_yn   "  Docker (docker, docker-compose, lazydocker)" "false")
@@ -118,7 +118,7 @@ common_git_enabled: ${git}
 # File manager (yazi + deps)
 common_filemanager_enabled: ${fm}
 
-# Terminal multiplexer (zellij)
+# Terminal multiplexer (tmux)
 common_terminal_enabled: ${terminal}
 
 # Fonts (jetbrains-mono-nerd, nerd-fonts-symbols, noto-emoji)
