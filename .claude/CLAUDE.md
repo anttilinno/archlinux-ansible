@@ -42,16 +42,18 @@ Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitigno
 ### Roles
 - **arch_install**: Complete Arch installation (partitioning, pacstrap, bootloader). Supports BIOS/UEFI, Intel/AMD CPUs, Intel/AMD/NVIDIA GPUs.
 - **common**: Package groups and services. Each group is toggleable via `common_*_enabled` variables in `inventories/provision/group_vars/all.yml`.
+- **wayland**: Wayland compositor (niri) and utilities. Each group is toggleable via `wayland_*_enabled` variables.
 
 ### Package Groups (common role)
 Toggle groups by editing `inventories/provision/group_vars/all.yml`:
-- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative)
+- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative), mdr
 - `common_shell_enabled`: zsh, starship
 - `common_git_enabled`: git, lazygit, github-cli
 - `common_filemanager_enabled`: yazi + dependencies
 - `common_terminal_enabled`: tmux
 - `common_fonts_enabled`: JetBrains Mono Nerd, Noto emoji
 - `common_dev_enabled`: chezmoi, stylua, shfmt
+- `common_laptop_enabled`: networkmanager, wpa_supplicant, brightnessctl
 - `common_docker_enabled`: docker, docker-compose, lazydocker
 - `common_devops_enabled`: aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin
 - `common_audio_enabled`: pipewire, wireplumber, alsa-utils
@@ -59,6 +61,11 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `common_aur_enabled`: shellcheck-bin, i3lock-color, zen-browser
 - `common_virt_enabled`: qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf
 - `common_office_enabled`: audacity, libreoffice, obsidian, slack
+
+### Package Groups (wayland role)
+- `wayland_niri_enabled`: niri, xorg-xwayland, xdg-desktop-portal-gnome
+- `wayland_bar_enabled`: waybar
+- `wayland_utils_enabled`: fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd
 
 ### Variable Precedence
 1. Role defaults (`roles/*/defaults/main.yml`)

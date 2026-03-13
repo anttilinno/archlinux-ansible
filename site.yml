@@ -18,6 +18,9 @@
       tags:
         - common
         - baseline
+    - role: wayland
+      tags:
+        - wayland
 
   post_tasks:
     - name: Provisioning complete

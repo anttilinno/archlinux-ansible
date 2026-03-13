@@ -1,0 +1,23 @@
+---
+# Wayland role tasks
+
+- name: Install niri compositor
+  community.general.pacman:
+    name: "{{ wayland_niri_packages }}"
+    state: present
+  when: wayland_niri_enabled | bool
+  tags: [packages, niri]
+
+- name: Install wayland bar
+  community.general.pacman:
+    name: "{{ wayland_bar_packages }}"
+    state: present
+  when: wayland_bar_enabled | bool
+  tags: [packages, bar]
+
+- name: Install wayland utilities
+  community.general.pacman:
+    name: "{{ wayland_utils_packages }}"
+    state: present
+  when: wayland_utils_enabled | bool
+  tags: [packages, wayland-utils]

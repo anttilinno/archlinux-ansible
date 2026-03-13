@@ -148,6 +148,21 @@
   when: common_audio_enabled | bool
   tags: [audio]
 
+- name: Install laptop packages
+  community.general.pacman:
+    name: "{{ common_laptop_packages }}"
+    state: present
+  when: common_laptop_enabled | bool
+  tags: [packages, laptop]
+
+- name: Enable and start NetworkManager
+  ansible.builtin.systemd:
+    name: NetworkManager.service
+    enabled: true
+    state: started
+  when: common_laptop_enabled | bool
+  tags: [laptop]
+
 - name: Install bluetooth packages
   community.general.pacman:
     name: "{{ common_bluetooth_packages }}"

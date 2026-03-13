@@ -1,0 +1,25 @@
+---
+# Wayland compositor and utilities
+
+# Niri compositor
+wayland_niri_enabled: true
+wayland_niri_packages:
+  - niri
+  - xorg-xwayland
+  - xdg-desktop-portal-gnome
+
+# Wayland bar
+wayland_bar_enabled: true
+wayland_bar_packages:
+  - waybar
+
+# Wayland utilities
+wayland_utils_enabled: true
+wayland_utils_packages:
+  - fuzzel
+  - foot
+  - grim
+  - slurp
+  - satty
+  - wl-clipboard
+  - wpaperd

@@ -16,6 +16,7 @@ common_cli_packages:
   - unzip
   - btop
   - cyme
+  - mdr
 
 # Shell
 common_shell_enabled: true
@@ -91,6 +92,13 @@ common_i3_packages:
   - flameshot
   - feh
   - x11-ssh-askpass
+
+# Laptop (networking, brightness)
+common_laptop_enabled: false
+common_laptop_packages:
+  - networkmanager
+  - wpa_supplicant
+  - brightnessctl
 
 # Bluetooth
 common_bluetooth_enabled: false
