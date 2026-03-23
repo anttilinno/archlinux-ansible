@@ -17,6 +17,7 @@ common_cli_packages:
   - btop
   - cyme
   - mdr
+  - inotify-tools
 
 # Shell
 common_shell_enabled: true
