@@ -29,30 +29,3 @@
     state: present
   when: kodi_enabled | bool and kodi_addons_enabled | bool
   tags: [packages, kodi, kodi-addons]
-
-- name: Get kodi user home directory
-  ansible.builtin.user:
-    name: "{{ kodi_user }}"
-    state: present
-  register: kodi_user_info
-  check_mode: true
-  when: kodi_enabled | bool and kodi_i3_config_enabled | bool
-  tags: [kodi, i3]
-
-- name: Ensure i3 config directory exists
-  ansible.builtin.file:
-    path: "{{ kodi_user_info.home }}/.config/i3"
-    state: directory
-    owner: "{{ kodi_user }}"
-    mode: "0755"
-  when: kodi_enabled | bool and kodi_i3_config_enabled | bool
-  tags: [kodi, i3]
-
-- name: Deploy i3 config for kodi workspace layout
-  ansible.builtin.template:
-    src: i3config.j2
-    dest: "{{ kodi_user_info.home }}/.config/i3/config"
-    owner: "{{ kodi_user }}"
-    mode: "0644"
-  when: kodi_enabled | bool and kodi_i3_config_enabled | bool
-  tags: [kodi, i3]

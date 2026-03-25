@@ -2,21 +2,21 @@
 # Gaming role defaults
 
 # Steam and Vulkan support
-gaming_steam_enabled: true
+gaming_steam_enabled: false
 gaming_steam_packages:
   - steam
   - lib32-vulkan-icd-loader
   - lib32-mesa
 
 # Performance tools (gamemode, mangohud)
-gaming_performance_enabled: true
+gaming_performance_enabled: false
 gaming_performance_packages:
   - gamemode
   - mangohud
   - lib32-mangohud
 
 # Wine (for non-Steam Windows games)
-gaming_wine_enabled: true
+gaming_wine_enabled: false
 gaming_wine_packages:
   - wine
   - winetricks
@@ -27,7 +27,7 @@ gaming_nvidia_packages:
   - lib32-nvidia-utils
 
 # AUR packages (heroic, protonup-qt, controller udev rules)
-gaming_aur_enabled: true
+gaming_aur_enabled: false
 gaming_aur_packages:
   - heroic-games-launcher-bin
   - protonup-qt

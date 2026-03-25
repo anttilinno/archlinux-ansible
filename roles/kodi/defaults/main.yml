@@ -1,24 +1,19 @@
 ---
 # Kodi media center
 
-kodi_enabled: true
+kodi_enabled: false
 kodi_packages:
   - kodi
 
 # Media player and codecs
-kodi_media_enabled: true
+kodi_media_enabled: false
 kodi_media_packages:
   - mpv
   - gst-plugins-bad
   - gst-plugins-ugly
 
 # Common addons
-kodi_addons_enabled: true
+kodi_addons_enabled: false
 kodi_addon_packages:
   - kodi-addon-inputstream-adaptive
   - kodi-addon-peripheral-joystick
-
-# i3 workspace assignments
-kodi_i3_config_enabled: true
-kodi_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
-kodi_browser: zen-browser
