@@ -24,6 +24,12 @@
     - role: esp32
       tags:
         - esp32
+    - role: gaming
+      tags:
+        - gaming
+    - role: kodi
+      tags:
+        - kodi
 
   post_tasks:
     - name: Provisioning complete

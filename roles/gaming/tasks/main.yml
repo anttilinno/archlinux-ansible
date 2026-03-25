@@ -1,0 +1,53 @@
+---
+# Gaming role tasks
+
+- name: Enable multilib repository
+  ansible.builtin.replace:
+    path: /etc/pacman.conf
+    regexp: '^#\[multilib\]\n#Include = /etc/pacman.d/mirrorlist'
+    replace: '[multilib]\nInclude = /etc/pacman.d/mirrorlist'
+  register: multilib_result
+  tags: [packages, multilib]
+
+- name: Update pacman cache after enabling multilib
+  community.general.pacman:
+    update_cache: true
+  when: multilib_result.changed
+  tags: [packages, multilib]
+
+- name: Install Steam and Vulkan support
+  community.general.pacman:
+    name: "{{ gaming_steam_packages }}"
+    state: present
+  when: gaming_steam_enabled | bool
+  tags: [packages, steam]
+
+- name: Install performance tools
+  community.general.pacman:
+    name: "{{ gaming_performance_packages }}"
+    state: present
+  when: gaming_performance_enabled | bool
+  tags: [packages, gamemode]
+
+- name: Install Wine
+  community.general.pacman:
+    name: "{{ gaming_wine_packages }}"
+    state: present
+  when: gaming_wine_enabled | bool
+  tags: [packages, wine]
+
+- name: Install NVIDIA 32-bit support
+  community.general.pacman:
+    name: "{{ gaming_nvidia_packages }}"
+    state: present
+  when: gaming_nvidia_enabled | bool
+  tags: [packages, nvidia]
+
+- name: Install gaming AUR packages
+  ansible.builtin.command: yay -S --noconfirm --needed {{ gaming_aur_packages | join(' ') }}
+  register: gaming_aur_result
+  changed_when: "'installing' in gaming_aur_result.stdout"
+  when: gaming_aur_enabled | bool
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  tags: [packages, aur, gaming-aur]

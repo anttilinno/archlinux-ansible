@@ -52,3 +52,14 @@ common_office_enabled: true
 
 # ESP32 development (arduino-cli, serial permissions, udev rules)
 esp32_enabled: true
+
+# Gaming - Steam, Heroic (Epic+GOG), Wine, performance tools
+gaming_steam_enabled: true
+gaming_performance_enabled: true
+gaming_wine_enabled: true
+gaming_nvidia_enabled: false
+gaming_aur_enabled: true
+
+# Kodi media center (requires i3/Xorg)
+kodi_enabled: true
+kodi_addons_enabled: true
