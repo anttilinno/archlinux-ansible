@@ -21,6 +21,9 @@
     - role: wayland
       tags:
         - wayland
+    - role: esp32
+      tags:
+        - esp32
 
   post_tasks:
     - name: Provisioning complete

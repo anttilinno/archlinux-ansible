@@ -1,0 +1,48 @@
+---
+# ESP32 development role tasks
+
+- name: Install ESP32 development packages
+  community.general.pacman:
+    name: "{{ esp32_packages }}"
+    state: present
+  when: esp32_enabled | bool
+  tags: [packages, esp32]
+
+- name: Ensure uucp group exists
+  ansible.builtin.group:
+    name: uucp
+    state: present
+  when: esp32_enabled | bool
+  tags: [esp32]
+
+- name: Ensure lock group exists
+  ansible.builtin.group:
+    name: lock
+    state: present
+  when: esp32_enabled | bool
+  tags: [esp32]
+
+- name: Add user to serial device groups
+  ansible.builtin.user:
+    name: "{{ esp32_user }}"
+    groups:
+      - uucp
+      - lock
+    append: true
+  when: esp32_enabled | bool
+  tags: [esp32]
+
+- name: Install udev rules for ESP32 and clones
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/99-esp32.rules
+    mode: "0644"
+    content: |
+      # ESP32 (Silicon Labs CP210x)
+      SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="0660", GROUP="uucp"
+      # ESP32 (WCH CH340/CH341 - common on clones)
+      SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0660", GROUP="uucp"
+      # ESP32-S2/S3 native USB
+      SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="*", MODE="0660", GROUP="uucp"
+  notify: Reload udev rules
+  when: esp32_enabled | bool
+  tags: [esp32]

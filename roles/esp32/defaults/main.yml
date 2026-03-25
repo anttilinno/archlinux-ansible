@@ -1,0 +1,11 @@
+---
+# ESP32 development tools
+
+# Arduino CLI and serial tools
+esp32_enabled: true
+esp32_packages:
+  - arduino-cli
+  - python-pyserial
+
+# User to add to serial groups
+esp32_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"

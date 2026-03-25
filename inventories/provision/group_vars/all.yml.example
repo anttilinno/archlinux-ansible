@@ -49,3 +49,6 @@ common_virt_enabled: true
 
 # Office/productivity apps (audacity, libreoffice, obsidian, slack)
 common_office_enabled: true
+
+# ESP32 development (arduino-cli, serial permissions, udev rules)
+esp32_enabled: true
