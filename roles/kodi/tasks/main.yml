@@ -29,3 +29,47 @@
     state: present
   when: kodi_enabled | bool and kodi_addons_enabled | bool
   tags: [packages, kodi, kodi-addons]
+
+- name: Create getty@tty1 override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/getty@tty1.service.d
+    state: directory
+    mode: "0755"
+  when: kodi_enabled | bool and kodi_autologin_enabled | bool
+  tags: [kodi, autologin]
+
+- name: Configure autologin on tty1
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/getty@tty1.service.d/autologin.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=-/usr/bin/agetty --autologin {{ kodi_autologin_user }} --noclear %I $TERM
+    mode: "0644"
+  when: kodi_enabled | bool and kodi_autologin_enabled | bool
+  tags: [kodi, autologin]
+
+- name: Configure .xinitrc to start i3
+  ansible.builtin.copy:
+    dest: "/home/{{ kodi_autologin_user }}/.xinitrc"
+    content: "exec i3\n"
+    owner: "{{ kodi_autologin_user }}"
+    group: "{{ kodi_autologin_user }}"
+    mode: "0644"
+  when: kodi_enabled | bool and kodi_autologin_enabled | bool
+  tags: [kodi, autologin]
+
+- name: Configure auto startx on login for tty1
+  ansible.builtin.blockinfile:
+    path: "/home/{{ kodi_autologin_user }}/.bash_profile"
+    create: true
+    owner: "{{ kodi_autologin_user }}"
+    group: "{{ kodi_autologin_user }}"
+    mode: "0644"
+    marker: "# {mark} ANSIBLE MANAGED - autostart i3"
+    block: |
+      if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
+        exec startx
+      fi
+  when: kodi_enabled | bool and kodi_autologin_enabled | bool
+  tags: [kodi, autologin]

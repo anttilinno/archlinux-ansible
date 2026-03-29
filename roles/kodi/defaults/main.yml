@@ -17,3 +17,7 @@ kodi_addons_enabled: false
 kodi_addon_packages:
   - kodi-addon-inputstream-adaptive
   - kodi-addon-peripheral-joystick
+
+# Autologin and start i3 on tty1
+kodi_autologin_enabled: false
+kodi_autologin_user: "{{ ansible_user_id }}"
