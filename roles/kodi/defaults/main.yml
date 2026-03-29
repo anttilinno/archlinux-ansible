@@ -24,6 +24,12 @@ kodi_aur_enabled: false
 kodi_aur_packages:
   - zen-browser-bin
 
+# Auto-mount USB drives
+kodi_automount_enabled: false
+kodi_automount_packages:
+  - udisks2
+  - udiskie
+
 # Autologin and start i3 on tty1
 kodi_autologin_enabled: false
 kodi_autologin_user: "{{ ansible_user_id }}"

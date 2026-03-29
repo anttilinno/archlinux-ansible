@@ -80,3 +80,47 @@
       fi
   when: kodi_enabled | bool and kodi_autologin_enabled | bool
   tags: [kodi, autologin]
+
+- name: Install automount packages
+  community.general.pacman:
+    name: "{{ kodi_automount_packages }}"
+    state: present
+  when: kodi_enabled | bool and kodi_automount_enabled | bool
+  tags: [packages, kodi, automount]
+
+- name: Enable udisks2 service
+  ansible.builtin.systemd:
+    name: udisks2.service
+    enabled: true
+    state: started
+  when: kodi_enabled | bool and kodi_automount_enabled | bool
+  tags: [kodi, automount]
+
+- name: Configure udiskie autostart in i3
+  ansible.builtin.blockinfile:
+    path: "/home/{{ kodi_autologin_user }}/.xinitrc"
+    insertbefore: "exec i3"
+    marker: "# {mark} ANSIBLE MANAGED - udiskie automount"
+    block: |
+      udiskie --no-notify --tray &
+  when: kodi_enabled | bool and kodi_automount_enabled | bool and kodi_autologin_enabled | bool
+  tags: [kodi, automount]
+
+- name: Disable X11 screen blanking and DPMS (leave only Kodi screensaver)
+  ansible.builtin.copy:
+    dest: /etc/X11/xorg.conf.d/10-no-blanking.conf
+    content: |
+      Section "ServerFlags"
+          Option "BlankTime"  "0"
+          Option "StandbyTime" "0"
+          Option "SuspendTime" "0"
+          Option "OffTime"    "0"
+      EndSection
+
+      Section "ServerLayout"
+          Identifier "DefaultLayout"
+          Option "DPMS" "false"
+      EndSection
+    mode: "0644"
+  when: kodi_enabled | bool
+  tags: [kodi]
