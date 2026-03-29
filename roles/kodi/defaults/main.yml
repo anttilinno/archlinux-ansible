@@ -18,6 +18,11 @@ kodi_addon_packages:
   - kodi-addon-inputstream-adaptive
   - kodi-addon-peripheral-joystick
 
+# AUR packages
+kodi_aur_enabled: false
+kodi_aur_packages:
+  - zen-browser-bin
+
 # Autologin and start i3 on tty1
 kodi_autologin_enabled: false
 kodi_autologin_user: "{{ ansible_user_id }}"

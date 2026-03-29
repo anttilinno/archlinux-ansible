@@ -30,6 +30,13 @@
   when: kodi_enabled | bool and kodi_addons_enabled | bool
   tags: [packages, kodi, kodi-addons]
 
+- name: Install Kodi AUR packages
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  ansible.builtin.command: yay -S --noconfirm --needed {{ kodi_aur_packages | join(' ') }}
+  when: kodi_enabled | bool and kodi_aur_enabled | bool
+  tags: [packages, kodi, aur]
+
 - name: Create getty@tty1 override directory
   ansible.builtin.file:
     path: /etc/systemd/system/getty@tty1.service.d
