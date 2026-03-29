@@ -61,5 +61,9 @@ gaming_nvidia_enabled: false
 gaming_aur_enabled: true
 
 # Kodi media center (requires i3/Xorg)
-kodi_enabled: true
-kodi_addons_enabled: true
+kodi_enabled: false
+kodi_media_enabled: false
+kodi_addons_enabled: false
+kodi_aur_enabled: false
+kodi_automount_enabled: false
+kodi_autologin_enabled: false
