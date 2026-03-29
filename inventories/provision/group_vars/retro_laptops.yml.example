@@ -1,0 +1,87 @@
+---
+# Retro laptop profile — minimal, lightweight setup
+# No compositor, no heavy apps, rxvt-unicode instead of wezterm
+machine_type: laptop
+
+# CLI tools (zoxide, fzf, fd, eza, bat, ripgrep, less, jq, unzip, btop, cyme, chezmoi)
+common_cli_enabled: true
+
+# Shell (zsh, starship)
+common_shell_enabled: true
+
+# Git tools (git, lazygit, github-cli)
+common_git_enabled: true
+
+# File manager (yazi + deps)
+common_filemanager_enabled: true
+
+# Terminal multiplexer (tmux)
+common_terminal_enabled: true
+
+# Fonts (jetbrains-mono-nerd, nerd-fonts-symbols, noto-emoji)
+common_fonts_enabled: true
+
+# Development tools (stylua, shfmt, luarocks, xh, nodejs, npm, pnpm)
+common_dev_enabled: false
+
+# Docker (docker, docker-compose, lazydocker)
+common_docker_enabled: false
+
+# Audio/pipewire (pipewire, pipewire-pulse, wireplumber, alsa-utils)
+common_audio_enabled: true
+
+# Bluetooth (bluez, bluez-utils, blueman)
+common_bluetooth_enabled: false
+
+# Laptop (networkmanager, wpa_supplicant, brightnessctl)
+common_laptop_enabled: true
+
+# i3 window manager — lightweight: no picom, polybar, flameshot, wezterm
+common_i3_enabled: true
+common_i3_packages:
+  - xorg-server
+  - xorg-xinit
+  - xorg-xrandr
+  - xorg-xset
+  - xorg-setxkbmap
+  - i3-wm
+  - rofi
+  - rxvt-unicode
+  - xclip
+  - feh
+  - x11-ssh-askpass
+
+# AUR packages (shellcheck-bin, i3lock-color, zen-browser-bin, xkb-switch, mdr)
+common_aur_enabled: true
+
+# DevOps tools
+common_devops_enabled: false
+
+# Virtualization
+common_virt_enabled: false
+
+# Office/productivity
+common_office_enabled: false
+
+# ESP32 development
+esp32_enabled: false
+
+# Gaming
+gaming_steam_enabled: false
+gaming_performance_enabled: false
+gaming_wine_enabled: false
+gaming_nvidia_enabled: false
+gaming_aur_enabled: false
+
+# Kodi
+kodi_enabled: false
+kodi_media_enabled: false
+kodi_addons_enabled: false
+kodi_aur_enabled: false
+kodi_automount_enabled: false
+kodi_autologin_enabled: false
+
+# Wayland — disabled on retro hardware
+wayland_niri_enabled: false
+wayland_bar_enabled: false
+wayland_utils_enabled: false

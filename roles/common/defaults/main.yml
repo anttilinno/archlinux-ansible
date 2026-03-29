@@ -16,8 +16,8 @@ common_cli_packages:
   - unzip
   - btop
   - cyme
-  - mdr
   - inotify-tools
+  - chezmoi
 
 # Shell
 common_shell_enabled: true
@@ -45,7 +45,6 @@ common_filemanager_packages:
 # Development tools
 common_dev_enabled: false
 common_dev_packages:
-  - chezmoi
   - stylua
   - shfmt
   - luarocks
@@ -89,6 +88,7 @@ common_i3_packages:
   - polybar
   - rofi
   - wezterm
+  - rxvt-unicode
   - xclip
   - flameshot
   - feh
@@ -149,3 +149,4 @@ common_aur_packages:
   - i3lock-color
   - zen-browser-bin
   - xkb-switch
+  - mdr

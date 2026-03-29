@@ -4,7 +4,6 @@
 kodi_enabled: false
 kodi_packages:
   - kodi
-  - chezmoi
 
 # Media player and codecs
 kodi_media_enabled: false
