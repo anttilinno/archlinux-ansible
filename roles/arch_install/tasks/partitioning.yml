@@ -6,12 +6,18 @@
         swapoff -a 2>/dev/null || true
         umount -R /mnt 2>/dev/null || true
         umount {{ arch_install_disk }}* 2>/dev/null || true
+        dmsetup remove_all 2>/dev/null || true
       when: arch_install_force_repartition | bool
       changed_when: false
       failed_when: false
 
-    - name: Wipe disk signatures when force repartition
-      ansible.builtin.command: wipefs -af {{ arch_install_disk }}
+    - name: Wipe all partition tables and signatures when force repartition
+      ansible.builtin.shell: |
+        sgdisk --zap-all {{ arch_install_disk }} 2>/dev/null || true
+        wipefs -af {{ arch_install_disk }}
+        sleep 1
+        partprobe {{ arch_install_disk }} || true
+        udevadm settle
       when: arch_install_force_repartition | bool
 
     - name: Detect current partition table type
@@ -70,6 +76,7 @@
         parted -s {{ arch_install_disk }} set 1 esp on
         parted -s {{ arch_install_disk }} mkpart primary linux-swap {{ arch_install_efi_size_mb }}MiB {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB
         parted -s {{ arch_install_disk }} mkpart primary ext4 {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB 100%
+        partprobe {{ arch_install_disk }}
       when:
         - arch_install_boot_mode == 'uefi'
         - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
