@@ -77,6 +77,8 @@ common_audio_packages:
 
 # i3 window manager (Xorg)
 common_i3_enabled: false
+common_i3_keyboard_layout: "us,ee"
+common_i3_keyboard_options: "grp:alt_shift_toggle,terminate:ctrl_alt_bksp"
 common_i3_packages:
   - xorg-server
   - xorg-xinit

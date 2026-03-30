@@ -203,6 +203,28 @@
   when: common_i3_enabled | bool
   tags: [packages, i3]
 
+- name: Create xorg.conf.d directory
+  ansible.builtin.file:
+    path: /etc/X11/xorg.conf.d
+    state: directory
+    mode: "0755"
+  when: common_i3_enabled | bool
+  tags: [i3]
+
+- name: Configure persistent keyboard layout for Xorg
+  ansible.builtin.copy:
+    dest: /etc/X11/xorg.conf.d/00-keyboard.conf
+    mode: "0644"
+    content: |
+      Section "InputClass"
+          Identifier "keyboard defaults"
+          MatchIsKeyboard "on"
+          Option "XkbLayout" "{{ common_i3_keyboard_layout }}"
+          Option "XkbOptions" "{{ common_i3_keyboard_options }}"
+      EndSection
+  when: common_i3_enabled | bool
+  tags: [i3]
+
 - name: Install fonts
   community.general.pacman:
     name: "{{ common_fonts_packages }}"
