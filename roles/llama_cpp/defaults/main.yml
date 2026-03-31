@@ -1,0 +1,12 @@
+---
+# llama.cpp role defaults
+
+# CPU-only build
+llama_cpp_enabled: false
+llama_cpp_packages:
+  - llama-cpp
+
+# CUDA build for NVIDIA GPUs (replaces CPU build)
+llama_cpp_cuda_enabled: false
+llama_cpp_cuda_packages:
+  - llama-cpp-cuda

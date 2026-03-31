@@ -1,0 +1,75 @@
+---
+# Home desktop profile — full setup with Wayland and gaming
+machine_type: desktop
+
+# CLI tools (zoxide, fzf, fd, eza, bat, ripgrep, less, jq, unzip, btop, cyme)
+common_cli_enabled: true
+
+# Shell (zsh, starship)
+common_shell_enabled: true
+
+# Git tools (git, lazygit, github-cli)
+common_git_enabled: true
+
+# File manager (yazi + deps)
+common_filemanager_enabled: true
+
+# Terminal multiplexer (tmux)
+common_terminal_enabled: true
+
+# Fonts (jetbrains-mono-nerd, nerd-fonts-symbols, noto-emoji)
+common_fonts_enabled: true
+
+# Development tools (chezmoi, stylua, shfmt, luarocks, xh)
+common_dev_enabled: true
+
+# Docker (docker, docker-compose, lazydocker)
+common_docker_enabled: true
+
+# Audio/pipewire (pipewire, pipewire-pulse, wireplumber, alsa-utils)
+common_audio_enabled: true
+
+# Bluetooth (bluez, bluez-utils, blueman)
+common_bluetooth_enabled: true
+
+# i3 window manager — disabled, using Wayland instead
+common_i3_enabled: false
+
+# AUR packages (shellcheck-bin, i3lock-color, zen-browser-bin)
+common_aur_enabled: true
+
+# DevOps tools (aws-cli-v2, opentofu-bin)
+common_devops_enabled: true
+
+# Virtualization (qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf)
+common_virt_enabled: true
+
+# Office/productivity apps (audacity, libreoffice, obsidian, slack)
+common_office_enabled: true
+
+# ESP32 development (arduino-cli, serial permissions, udev rules)
+esp32_enabled: true
+
+# Gaming - Steam, Heroic (Epic+GOG), Wine, performance tools
+gaming_steam_enabled: true
+gaming_performance_enabled: true
+gaming_wine_enabled: true
+gaming_nvidia_enabled: true
+gaming_aur_enabled: true
+
+# Kodi media center — disabled
+kodi_enabled: false
+kodi_media_enabled: false
+kodi_addons_enabled: false
+kodi_aur_enabled: false
+kodi_automount_enabled: false
+kodi_autologin_enabled: false
+
+# llama.cpp — enable one: cpu or cuda (NVIDIA)
+llama_cpp_enabled: false
+llama_cpp_cuda_enabled: true
+
+# Wayland compositor and utilities
+wayland_niri_enabled: true
+wayland_bar_enabled: true
+wayland_utils_enabled: true
