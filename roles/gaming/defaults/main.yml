@@ -32,3 +32,7 @@ gaming_aur_packages:
   - heroic-games-launcher-bin
   - protonup-qt
   - game-devices-udev
+
+# GPG keys required by AUR packages (e.g. game-devices-udev)
+gaming_aur_gpg_keys:
+  - 6E58E886A8E07538A2485FAED6A4F386B4881229

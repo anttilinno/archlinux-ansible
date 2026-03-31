@@ -21,3 +21,22 @@
     state: present
   when: wayland_utils_enabled | bool
   tags: [packages, wayland-utils]
+
+- name: Get target user info for Slack Wayland flags
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  when: common_office_enabled | default(false) | bool
+  tags: [slack]
+
+- name: Configure Slack to run natively on Wayland
+  ansible.builtin.copy:
+    dest: "/home/{{ ansible_env.SUDO_USER | default(ansible_user_id) }}/.config/slack-flags.conf"
+    content: |
+      --enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer
+      --ozone-platform=wayland
+    owner: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    group: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    mode: "0644"
+  when: common_office_enabled | default(false) | bool
+  tags: [slack]

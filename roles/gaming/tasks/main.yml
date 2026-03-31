@@ -43,6 +43,15 @@
   when: gaming_nvidia_enabled | bool
   tags: [packages, nvidia]
 
+- name: Import GPG keys for AUR packages
+  ansible.builtin.shell: curl -s "https://keys.openpgp.org/vks/v1/by-fingerprint/{{ item }}" | gpg --import
+  loop: "{{ gaming_aur_gpg_keys }}"
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  changed_when: true
+  when: gaming_aur_enabled | bool
+  tags: [packages, aur, gaming-aur]
+
 - name: Install gaming AUR packages
   ansible.builtin.command: yay -S --noconfirm --needed {{ gaming_aur_packages | join(' ') }}
   register: gaming_aur_result
