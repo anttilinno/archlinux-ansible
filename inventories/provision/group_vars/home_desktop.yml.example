@@ -65,9 +65,9 @@ kodi_aur_enabled: false
 kodi_automount_enabled: false
 kodi_autologin_enabled: false
 
-# llama.cpp — enable one: cpu or cuda (NVIDIA)
-llama_cpp_enabled: false
-llama_cpp_cuda_enabled: true
+# ollama — enable one: cpu or cuda (NVIDIA)
+ollama_enabled: false
+ollama_cuda_enabled: true
 
 # Wayland compositor and utilities
 wayland_niri_enabled: true

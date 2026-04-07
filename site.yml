@@ -28,9 +28,9 @@
     - role: gaming
       tags:
         - gaming
-    - role: llama_cpp
+    - role: ollama
       tags:
-        - llama_cpp
+        - ollama
     - role: kodi
       tags:
         - kodi

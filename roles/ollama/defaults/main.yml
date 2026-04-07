@@ -1,0 +1,10 @@
+---
+# ollama role defaults
+
+# CPU build (official repo)
+ollama_enabled: false
+
+# CUDA build for NVIDIA GPUs (AUR, replaces CPU build)
+ollama_cuda_enabled: false
+ollama_cuda_packages:
+  - ollama-cuda
