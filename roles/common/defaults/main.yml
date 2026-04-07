@@ -18,6 +18,7 @@ common_cli_packages:
   - cyme
   - inotify-tools
   - chezmoi
+  - fastfetch
 
 # Shell
 common_shell_enabled: true
