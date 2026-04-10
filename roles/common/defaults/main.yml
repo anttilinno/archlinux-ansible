@@ -53,6 +53,7 @@ common_dev_packages:
   - nodejs
   - npm
   - pnpm
+  - atuin
 
 # Terminal multiplexer
 common_terminal_enabled: true
