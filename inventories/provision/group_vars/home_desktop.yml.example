@@ -73,3 +73,4 @@ ollama_cuda_enabled: true
 wayland_niri_enabled: true
 wayland_bar_enabled: true
 wayland_utils_enabled: true
+wayland_autologin_enabled: false

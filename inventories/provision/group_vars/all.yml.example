@@ -67,3 +67,6 @@ kodi_addons_enabled: false
 kodi_aur_enabled: false
 kodi_automount_enabled: false
 kodi_autologin_enabled: false
+
+# Wayland autologin — auto-start niri on tty1
+wayland_autologin_enabled: false

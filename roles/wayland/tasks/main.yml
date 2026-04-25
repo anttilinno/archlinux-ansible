@@ -22,6 +22,40 @@
   when: wayland_utils_enabled | bool
   tags: [packages, wayland-utils]
 
+- name: Create getty@tty1 override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/getty@tty1.service.d
+    state: directory
+    mode: "0755"
+  when: wayland_autologin_enabled | bool
+  tags: [wayland, autologin]
+
+- name: Configure autologin on tty1
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/getty@tty1.service.d/autologin.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=-/usr/bin/agetty --autologin {{ wayland_autologin_user }} --noclear %I $TERM
+    mode: "0644"
+  when: wayland_autologin_enabled | bool
+  tags: [wayland, autologin]
+
+- name: Configure auto-start niri on login for tty1
+  ansible.builtin.blockinfile:
+    path: "/home/{{ wayland_autologin_user }}/.bash_profile"
+    create: true
+    owner: "{{ wayland_autologin_user }}"
+    group: "{{ wayland_autologin_user }}"
+    mode: "0644"
+    marker: "# {mark} ANSIBLE MANAGED - autostart niri"
+    block: |
+      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
+        exec niri-session
+      fi
+  when: wayland_autologin_enabled | bool
+  tags: [wayland, autologin]
+
 - name: Get target user info for Slack Wayland flags
   ansible.builtin.getent:
     database: passwd

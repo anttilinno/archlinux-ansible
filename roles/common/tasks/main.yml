@@ -203,6 +203,13 @@
   when: common_i3_enabled | bool
   tags: [packages, i3]
 
+- name: Install i3 AUR packages
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  ansible.builtin.command: yay -S --noconfirm --needed {{ common_i3_aur_packages | join(' ') }}
+  when: common_i3_enabled | bool and common_i3_aur_packages | length > 0
+  tags: [packages, i3, aur]
+
 - name: Create xorg.conf.d directory
   ansible.builtin.file:
     path: /etc/X11/xorg.conf.d

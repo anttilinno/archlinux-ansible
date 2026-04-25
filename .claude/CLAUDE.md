@@ -57,8 +57,8 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `common_docker_enabled`: docker, docker-compose, lazydocker
 - `common_devops_enabled`: aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin
 - `common_audio_enabled`: pipewire, wireplumber, alsa-utils
-- `common_i3_enabled`: xorg, i3-wm, polybar, rofi, wezterm
-- `common_aur_enabled`: shellcheck-bin, i3lock-color, zen-browser
+- `common_i3_enabled`: xorg, i3-wm, polybar, rofi, wezterm (+ AUR: xkb-switch)
+- `common_aur_enabled`: shellcheck-bin, i3lock-color, zen-browser, mdr, pet-bin
 - `common_virt_enabled`: qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf
 - `common_office_enabled`: audacity, libreoffice, obsidian, slack
 
@@ -66,6 +66,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `wayland_niri_enabled`: niri, xorg-xwayland, xdg-desktop-portal-gnome
 - `wayland_bar_enabled`: waybar
 - `wayland_utils_enabled`: fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd
+- `wayland_autologin_enabled`: auto-start niri on tty1 via getty autologin + bash_profile (user: `wayland_autologin_user`)
 
 ### Variable Precedence
 1. Role defaults (`roles/*/defaults/main.yml`)

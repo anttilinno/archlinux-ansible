@@ -19,6 +19,8 @@ gaming_performance_packages:
 gaming_wine_enabled: false
 gaming_wine_packages:
   - wine
+  - wine-mono
+  - wine-gecko
   - winetricks
 
 # NVIDIA 32-bit support (enable if using NVIDIA GPU)

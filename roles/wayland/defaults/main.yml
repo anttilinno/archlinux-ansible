@@ -23,3 +23,7 @@ wayland_utils_packages:
   - satty
   - wl-clipboard
   - wpaperd
+
+# Autologin and start niri on tty1
+wayland_autologin_enabled: false
+wayland_autologin_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
