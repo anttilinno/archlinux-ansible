@@ -22,6 +22,20 @@
   when: wayland_utils_enabled | bool
   tags: [packages, wayland-utils]
 
+- name: Install Dank Material Shell dependencies
+  community.general.pacman:
+    name: "{{ wayland_dms_packages }}"
+    state: present
+  when: wayland_dms_enabled | bool
+  tags: [packages, dms]
+
+- name: Install Dank Material Shell AUR packages
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  ansible.builtin.command: yay -S --noconfirm --needed {{ wayland_dms_aur_packages | join(' ') }}
+  when: wayland_dms_enabled | bool and wayland_dms_aur_packages | length > 0
+  tags: [packages, dms, aur]
+
 - name: Create getty@tty1 override directory
   ansible.builtin.file:
     path: /etc/systemd/system/getty@tty1.service.d

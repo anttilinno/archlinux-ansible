@@ -24,6 +24,27 @@ wayland_utils_packages:
   - wl-clipboard
   - wpaperd
 
+# Dank Material Shell (Quickshell-based desktop shell)
+# Repo: https://github.com/AvengeMedia/DankMaterialShell
+wayland_dms_enabled: false
+wayland_dms_packages:
+  - quickshell
+  - dgop
+  - accountsservice
+  - cava
+  - i2c-tools
+  - ddcutil
+  - cliphist
+  - libqalculate
+  - power-profiles-daemon
+  - qt6-multimedia
+  - qt6ct
+  - wtype
+wayland_dms_aur_packages:
+  - dms-shell-git
+  - matugen-bin
+  - ttf-material-symbols-variable-git
+
 # Autologin and start niri on tty1
 wayland_autologin_enabled: false
 wayland_autologin_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"

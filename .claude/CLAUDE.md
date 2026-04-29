@@ -66,6 +66,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `wayland_niri_enabled`: niri, xorg-xwayland, xdg-desktop-portal-gnome
 - `wayland_bar_enabled`: waybar
 - `wayland_utils_enabled`: fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd
+- `wayland_dms_enabled`: Dank Material Shell (Quickshell-based desktop shell) + deps (pacman: quickshell, dgop, cava, ddcutil, cliphist, etc.; AUR: dms-shell-git, matugen-bin, ttf-material-symbols-variable-git)
 - `wayland_autologin_enabled`: auto-start niri on tty1 via getty autologin + bash_profile (user: `wayland_autologin_user`)
 
 ### Variable Precedence
