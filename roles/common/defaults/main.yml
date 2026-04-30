@@ -133,7 +133,7 @@ common_devops_packages:
 # Office/productivity apps (uses yay for AUR packages)
 common_office_enabled: false
 common_office_packages:
-  - aerc
+  - meli
   - audacity
   - libreoffice-fresh
   - obsidian-bin
