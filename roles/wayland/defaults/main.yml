@@ -23,6 +23,7 @@ wayland_utils_packages:
   - satty
   - wl-clipboard
   - wpaperd
+  - swaylock
 
 # Dank Material Shell (Quickshell-based desktop shell)
 # Repo: https://github.com/AvengeMedia/DankMaterialShell
