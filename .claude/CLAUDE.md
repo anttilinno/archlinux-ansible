@@ -46,11 +46,11 @@ Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitigno
 
 ### Package Groups (common role)
 Toggle groups by editing `inventories/provision/group_vars/all.yml`:
-- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative), mdr, chezmoi, fastfetch
+- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative), mdr, chezmoi, fastfetch, worktrunk
 - `common_shell_enabled`: zsh, starship
 - `common_git_enabled`: git, lazygit, github-cli
 - `common_filemanager_enabled`: yazi + dependencies
-- `common_terminal_enabled`: tmux
+- `common_terminal_enabled`: zellij
 - `common_fonts_enabled`: JetBrains Mono Nerd, Noto emoji
 - `common_dev_enabled`: stylua, shfmt
 - `common_laptop_enabled`: networkmanager, wpa_supplicant, brightnessctl

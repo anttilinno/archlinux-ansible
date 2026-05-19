@@ -19,6 +19,7 @@ common_cli_packages:
   - inotify-tools
   - chezmoi
   - fastfetch
+  - worktrunk
 
 # Shell
 common_shell_enabled: true
@@ -58,7 +59,7 @@ common_dev_packages:
 # Terminal multiplexer
 common_terminal_enabled: true
 common_terminal_packages:
-  - tmux
+  - zellij
 
 # Docker
 common_docker_enabled: false
