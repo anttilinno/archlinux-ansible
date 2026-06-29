@@ -25,6 +25,12 @@ wayland_utils_packages:
   - wpaperd
   - swaylock
 
+# PDF viewer (keyboard-driven, mupdf backend)
+wayland_zathura_enabled: true
+wayland_zathura_packages:
+  - zathura
+  - zathura-pdf-mupdf
+
 # Dank Material Shell (Quickshell-based desktop shell)
 # Repo: https://github.com/AvengeMedia/DankMaterialShell
 wayland_dms_enabled: false

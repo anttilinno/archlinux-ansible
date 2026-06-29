@@ -22,6 +22,13 @@
   when: wayland_utils_enabled | bool
   tags: [packages, wayland-utils]
 
+- name: Install zathura PDF viewer
+  community.general.pacman:
+    name: "{{ wayland_zathura_packages }}"
+    state: present
+  when: wayland_zathura_enabled | bool
+  tags: [packages, zathura]
+
 - name: Install Dank Material Shell dependencies
   community.general.pacman:
     name: "{{ wayland_dms_packages }}"
