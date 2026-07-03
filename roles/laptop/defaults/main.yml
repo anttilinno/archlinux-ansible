@@ -1,0 +1,7 @@
+---
+# laptop role defaults
+
+# Cap battery charge to preserve longevity when mostly on AC (ThinkPad/sysfs)
+laptop_battery_charge_limit_enabled: false
+laptop_battery_charge_limit: 80
+laptop_battery: BAT0

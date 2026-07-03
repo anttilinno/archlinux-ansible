@@ -19,6 +19,9 @@
       tags:
         - common
         - baseline
+    - role: laptop
+      tags:
+        - laptop
     - role: wayland
       tags:
         - wayland
