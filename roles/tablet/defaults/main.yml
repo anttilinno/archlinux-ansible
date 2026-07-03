@@ -1,0 +1,11 @@
+---
+# tablet role defaults — OpenTabletDriver (Huion KD100 keydial and similar)
+
+tablet_enabled: false
+
+# AUR package providing the driver, daemon and udev rules
+tablet_aur_packages:
+  - opentabletdriver
+
+# Enable the per-user daemon that binds keys/dial and applies config at login
+tablet_service_enabled: true

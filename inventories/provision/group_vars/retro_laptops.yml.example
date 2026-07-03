@@ -63,6 +63,9 @@ common_virt_enabled: false
 # Office/productivity
 common_office_enabled: false
 
+# Graphics tablet / keydial (OpenTabletDriver) — off on retro hardware
+tablet_enabled: false
+
 # ESP32 development
 esp32_enabled: false
 

@@ -1,0 +1,33 @@
+---
+# tablet role tasks — OpenTabletDriver for Huion KD100 and similar
+# Kernel hid_uclogic sends fixed keystrokes by default; OTD takes raw HID
+# access (its package ships the udev rules) so keys/dial can be rebound.
+
+- name: Install OpenTabletDriver from AUR
+  ansible.builtin.command: yay -S --noconfirm --needed {{ tablet_aur_packages | join(' ') }}
+  register: tablet_aur_result
+  changed_when: "'installing' in tablet_aur_result.stdout"
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  notify: Reload udev rules
+  when: tablet_enabled | bool
+  tags: [packages, aur, tablet]
+
+- name: Look up target user uid for the user session bus
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  when: tablet_enabled | bool and tablet_service_enabled | bool
+  tags: [tablet, service]
+
+- name: Enable OpenTabletDriver user service
+  ansible.builtin.systemd:
+    name: opentabletdriver.service
+    enabled: true
+    scope: user
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ getent_passwd[ansible_env.SUDO_USER | default(ansible_user_id)][1] }}"
+  when: tablet_enabled | bool and tablet_service_enabled | bool
+  tags: [tablet, service]

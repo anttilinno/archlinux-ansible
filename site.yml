@@ -25,6 +25,9 @@
     - role: wayland
       tags:
         - wayland
+    - role: tablet
+      tags:
+        - tablet
     - role: esp32
       tags:
         - esp32
