@@ -27,6 +27,12 @@ common_shell_packages:
   - zsh
   - starship
 
+# Keyring (Secret Service — apps that store credentials depend on it)
+common_keyring_enabled: true
+common_keyring_packages:
+  - gnome-keyring
+  - libsecret
+
 # Git tools
 common_git_enabled: true
 common_git_packages:

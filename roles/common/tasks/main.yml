@@ -85,6 +85,13 @@
   when: common_shell_enabled | bool
   tags: [packages, shell]
 
+- name: Install keyring packages
+  community.general.pacman:
+    name: "{{ common_keyring_packages }}"
+    state: present
+  when: common_keyring_enabled | bool
+  tags: [packages, keyring]
+
 - name: Install git tools
   community.general.pacman:
     name: "{{ common_git_packages }}"

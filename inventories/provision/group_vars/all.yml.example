@@ -11,6 +11,9 @@ common_cli_enabled: true
 # Shell (zsh, starship)
 common_shell_enabled: true
 
+# Keyring (gnome-keyring, libsecret)
+common_keyring_enabled: true
+
 # Git tools (git, lazygit, github-cli)
 common_git_enabled: true
 
