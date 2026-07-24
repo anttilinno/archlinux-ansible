@@ -17,6 +17,13 @@
   ansible.builtin.set_fact:
     arch_install_root_partuuid_final: "{{ arch_install_root_partuuid.stdout | default(arch_install_root_partuuid_uefi.stdout) }}"
 
+# CPU microcode must be loaded before the initramfs, or updates never apply
+- name: Set microcode image fact
+  ansible.builtin.set_fact:
+    arch_install_ucode_img: >-
+      {{ 'intel-ucode.img' if arch_install_cpu == 'intel'
+         else ('amd-ucode.img' if arch_install_cpu == 'amd' else '') }}
+
 # BIOS: syslinux
 - name: Ensure /boot/syslinux exists (BIOS)
   ansible.builtin.file:
@@ -49,13 +56,7 @@
           MENU LABEL Arch Linux
           LINUX ../vmlinuz-linux-lts
           APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
-          INITRD ../initramfs-linux-lts.img
-
-      LABEL archfallback
-          MENU LABEL Arch Linux (fallback)
-          LINUX ../vmlinuz-linux-lts
-          APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
-          INITRD ../initramfs-linux-lts-fallback.img
+          INITRD {{ ('../' ~ arch_install_ucode_img ~ ',') if arch_install_ucode_img else '' }}../initramfs-linux-lts.img
   when: arch_install_boot_mode == 'bios'
   notify: install syslinux mbr
 
@@ -88,13 +89,10 @@
           protocol: linux
           kernel_path: boot():/vmlinuz-linux-lts
           cmdline: root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+      {% if arch_install_ucode_img %}
+          module_path: boot():/{{ arch_install_ucode_img }}
+      {% endif %}
           module_path: boot():/initramfs-linux-lts.img
-
-      /Arch Linux (fallback)
-          protocol: linux
-          kernel_path: boot():/vmlinuz-linux-lts
-          cmdline: root=PARTUUID={{ arch_install_root_partuuid_final }} rw
-          module_path: boot():/initramfs-linux-lts-fallback.img
   when: arch_install_boot_mode == 'uefi'
 
 - name: Rebuild initramfs
