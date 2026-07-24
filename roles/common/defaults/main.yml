@@ -20,6 +20,7 @@ common_cli_packages:
   - chezmoi
   - fastfetch
   - worktrunk
+  - caligula
 
 # Shell
 common_shell_enabled: true
