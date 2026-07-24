@@ -41,7 +41,7 @@ common_bluetooth_enabled: true
 # i3 window manager (xorg, i3-wm, polybar, rofi, wezterm, xclip, flameshot)
 common_i3_enabled: true
 
-# AUR packages (shellcheck-bin, i3lock-color, zen-browser-bin)
+# AUR packages (shellcheck-bin, zen-browser-bin)
 common_aur_enabled: true
 
 # DevOps tools (aws-cli-v2, opentofu-bin)

@@ -51,7 +51,7 @@ common_i3_packages:
   - feh
   - x11-ssh-askpass
 
-# AUR packages (shellcheck-bin, i3lock-color, zen-browser-bin, xkb-switch, mdr)
+# AUR packages (shellcheck-bin, zen-browser-bin)
 common_aur_enabled: true
 
 # DevOps tools

@@ -62,6 +62,9 @@ common_dev_packages:
   - npm
   - pnpm
   - atuin
+  - uv
+common_dev_aur_packages:
+  - claude-code
 
 # Terminal multiplexer
 common_terminal_enabled: true
@@ -107,6 +110,7 @@ common_i3_packages:
   - x11-ssh-askpass
 common_i3_aur_packages:
   - xkb-switch
+  - i3lock-color
 
 # Laptop (networking, brightness)
 common_laptop_enabled: false
@@ -160,7 +164,4 @@ common_virt_packages:
 common_aur_enabled: false
 common_aur_packages:
   - shellcheck-bin
-  - i3lock-color
   - zen-browser-bin
-  - mdr
-  - pet-bin

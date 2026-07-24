@@ -46,30 +46,30 @@ Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitigno
 
 ### Package Groups (common role)
 Toggle groups by editing `inventories/provision/group_vars/all.yml`:
-- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative), mdr, chezmoi, fastfetch, worktrunk, caligula (dd TUI)
+- `common_cli_enabled`: zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, cyme (usbutils alternative), chezmoi, fastfetch, worktrunk, caligula (dd TUI)
 - `common_shell_enabled`: zsh, starship
 - `common_keyring_enabled`: gnome-keyring, libsecret (Secret Service for apps storing credentials)
 - `common_git_enabled`: git, lazygit, github-cli
 - `common_filemanager_enabled`: yazi + dependencies
 - `common_terminal_enabled`: zellij
 - `common_fonts_enabled`: JetBrains Mono Nerd, Noto emoji
-- `common_dev_enabled`: stylua, shfmt
+- `common_dev_enabled`: stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code)
 - `common_laptop_enabled`: networkmanager, wpa_supplicant, brightnessctl
 - `common_docker_enabled`: docker, docker-compose, lazydocker
 - `common_devops_enabled`: aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin
 - `common_audio_enabled`: pipewire, wireplumber, alsa-utils
-- `common_i3_enabled`: xorg, i3-wm, polybar, rofi, wezterm (+ AUR: xkb-switch)
-- `common_aur_enabled`: shellcheck-bin, i3lock-color, zen-browser, mdr, pet-bin
+- `common_i3_enabled`: xorg, i3-wm, polybar, rofi, wezterm (+ AUR: xkb-switch, i3lock-color)
+- `common_aur_enabled`: shellcheck-bin, zen-browser
 - `common_virt_enabled`: qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf
 - `common_office_enabled`: audacity, libreoffice, obsidian, slack
 
 ### Package Groups (wayland role)
-- `wayland_niri_enabled`: niri, xorg-xwayland, xdg-desktop-portal-gnome
+- `wayland_niri_enabled`: niri, xorg-xwayland, xwayland-satellite, xdg-desktop-portal-gnome
 - `wayland_bar_enabled`: waybar
 - `wayland_utils_enabled`: fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd, swaylock
 - `wayland_zathura_enabled`: zathura, zathura-pdf-mupdf (keyboard-driven PDF viewer)
-- `wayland_dms_enabled`: Dank Material Shell (Quickshell-based desktop shell) + deps (pacman: quickshell, dgop, cava, ddcutil, cliphist, etc.; AUR: dms-shell-git, matugen-bin, ttf-material-symbols-variable-git)
-- `wayland_autologin_enabled`: auto-start niri on tty1 via getty autologin + bash_profile (user: `wayland_autologin_user`)
+- `wayland_dms_enabled`: (default on) Dank Material Shell (Quickshell-based desktop shell) + deps (pacman: quickshell, dgop, cava, ddcutil, cliphist, etc.; AUR: dms-shell-git, matugen-bin, ttf-material-symbols-variable-git); enables `dms.service` via `systemctl --global`
+- `wayland_autologin_enabled`: auto-start niri on tty1 via getty autologin, written to both `.bash_profile` and `.zprofile` (user: `wayland_autologin_user`)
 
 ### Variable Precedence
 1. Role defaults (`roles/*/defaults/main.yml`)

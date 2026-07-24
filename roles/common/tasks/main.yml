@@ -113,6 +113,13 @@
   when: common_dev_enabled | bool
   tags: [packages, dev]
 
+- name: Install development AUR packages
+  become: true
+  become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+  ansible.builtin.command: yay -S --noconfirm --needed {{ common_dev_aur_packages | join(' ') }}
+  when: common_dev_enabled | bool and common_dev_aur_packages | length > 0
+  tags: [packages, dev, aur]
+
 - name: Install terminal multiplexer
   community.general.pacman:
     name: "{{ common_terminal_packages }}"
