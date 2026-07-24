@@ -69,7 +69,7 @@ common_dev_aur_packages:
 # Terminal multiplexer
 common_terminal_enabled: true
 common_terminal_packages:
-  - zellij
+  - tmux
 
 # Docker
 common_docker_enabled: false

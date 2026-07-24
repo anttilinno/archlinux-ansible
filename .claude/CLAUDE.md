@@ -51,7 +51,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `common_keyring_enabled`: gnome-keyring, libsecret (Secret Service for apps storing credentials)
 - `common_git_enabled`: git, lazygit, github-cli
 - `common_filemanager_enabled`: yazi + dependencies
-- `common_terminal_enabled`: zellij
+- `common_terminal_enabled`: tmux
 - `common_fonts_enabled`: JetBrains Mono Nerd, Noto emoji
 - `common_dev_enabled`: stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code)
 - `common_laptop_enabled`: networkmanager, wpa_supplicant, brightnessctl
