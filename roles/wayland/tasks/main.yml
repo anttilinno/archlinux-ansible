@@ -43,6 +43,15 @@
   when: wayland_dms_enabled | bool and wayland_dms_aur_packages | length > 0
   tags: [packages, dms, aur]
 
+# dms.service is WantedBy=graphical-session.target; --global avoids needing a
+# live user session (and XDG_RUNTIME_DIR) at provisioning time.
+- name: Enable Dank Material Shell user service
+  ansible.builtin.command: systemctl --global enable dms.service
+  args:
+    creates: /etc/systemd/user/graphical-session.target.wants/dms.service
+  when: wayland_dms_enabled | bool
+  tags: [wayland, dms]
+
 - name: Create getty@tty1 override directory
   ansible.builtin.file:
     path: /etc/systemd/system/getty@tty1.service.d
@@ -62,9 +71,12 @@
   when: wayland_autologin_enabled | bool
   tags: [wayland, autologin]
 
+# Written to both profiles: agetty starts the user's login shell, and zsh
+# (the default admin shell) never reads .bash_profile.
+# niri-session must get -l, else it re-execs the login shell and loops.
 - name: Configure auto-start niri on login for tty1
   ansible.builtin.blockinfile:
-    path: "/home/{{ wayland_autologin_user }}/.bash_profile"
+    path: "/home/{{ wayland_autologin_user }}/{{ item }}"
     create: true
     owner: "{{ wayland_autologin_user }}"
     group: "{{ wayland_autologin_user }}"
@@ -72,8 +84,11 @@
     marker: "# {mark} ANSIBLE MANAGED - autostart niri"
     block: |
       if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-        exec niri-session
+        exec niri-session -l
       fi
+  loop:
+    - .bash_profile
+    - .zprofile
   when: wayland_autologin_enabled | bool
   tags: [wayland, autologin]
 

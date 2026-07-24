@@ -6,6 +6,7 @@ wayland_niri_enabled: true
 wayland_niri_packages:
   - niri
   - xorg-xwayland
+  - xwayland-satellite
   - xdg-desktop-portal-gnome
 
 # Wayland bar
@@ -33,7 +34,7 @@ wayland_zathura_packages:
 
 # Dank Material Shell (Quickshell-based desktop shell)
 # Repo: https://github.com/AvengeMedia/DankMaterialShell
-wayland_dms_enabled: false
+wayland_dms_enabled: true
 wayland_dms_packages:
   - quickshell
   - dgop
