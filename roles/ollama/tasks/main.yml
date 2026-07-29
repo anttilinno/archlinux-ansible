@@ -12,15 +12,18 @@
   ansible.builtin.command: yay -S --noconfirm --needed {{ ollama_cuda_packages | join(' ') }}
   register: ollama_cuda_result
   changed_when: "'installing' in ollama_cuda_result.stdout"
-  when: ollama_cuda_enabled | bool
+  when: ollama_enabled | bool and ollama_cuda_enabled | bool
   become: true
   become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
   tags: [packages, aur, ollama, ollama-cuda]
 
+# ollama_enabled is the master switch; ollama_cuda_enabled only selects which
+# build. Gating this on "enabled or cuda" installed and started ollama on hosts
+# that had ollama_enabled: false but left ollama_cuda_enabled: true.
 - name: Enable and start ollama service
   ansible.builtin.systemd:
     name: ollama
     enabled: true
     state: started
-  when: ollama_enabled | bool or ollama_cuda_enabled | bool
+  when: ollama_enabled | bool
   tags: [services, ollama]
