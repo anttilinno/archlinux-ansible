@@ -18,4 +18,3 @@
       {% else %}
       No existing installation detected. Proceeding with fresh install.
       {% endif %}
-

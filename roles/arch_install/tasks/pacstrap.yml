@@ -1,11 +1,18 @@
 ---
 - name: Base system installation block
+  tags:
+    - pacstrap
   block:
     - name: Install base system and requested packages
       ansible.builtin.shell: |
         set -e
         export PACMAN_OPTS="--noconfirm --disable-download-timeout"
-        pacstrap -K /mnt {{ (arch_install_base_packages + arch_install_cpu_packages[arch_install_cpu] + arch_install_gpu_packages[arch_install_gpu] + arch_install_boot_packages[arch_install_boot_mode] + (arch_install_wifi | bool | ternary(arch_install_wifi_packages, []))) | unique | join(' ') }}
+        pacstrap -K /mnt {{ (arch_install_base_packages
+                             + arch_install_cpu_packages[arch_install_cpu]
+                             + arch_install_gpu_packages[arch_install_gpu]
+                             + arch_install_boot_packages[arch_install_boot_mode]
+                             + (arch_install_wifi | bool | ternary(arch_install_wifi_packages, [])))
+                            | unique | join(' ') }}
       args:
         executable: /bin/bash
       register: arch_install_pacstrap_out
@@ -26,7 +33,3 @@
     - name: Pacstrap failed
       ansible.builtin.fail:
         msg: "Base system installation failed. Check network connectivity and mirror availability."
-
-  tags:
-    - pacstrap
-

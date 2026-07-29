@@ -6,13 +6,15 @@
     path: /etc/pacman.conf
     regexp: '^#\[multilib\]\n#Include = /etc/pacman.d/mirrorlist'
     replace: '[multilib]\nInclude = /etc/pacman.d/mirrorlist'
-  register: multilib_result
+  register: gaming_multilib_result
   tags: [packages, multilib]
 
-- name: Update pacman cache after enabling multilib
+# Not a handler: handlers run at the end of the play, but the very next task
+# installs Steam from multilib and needs the refreshed cache immediately.
+- name: Update pacman cache after enabling multilib  # noqa: no-handler
   community.general.pacman:
     update_cache: true
-  when: multilib_result.changed
+  when: gaming_multilib_result.changed
   tags: [packages, multilib]
 
 - name: Install Steam and Vulkan support

@@ -15,7 +15,9 @@
 
 - name: Set root PARTUUID fact
   ansible.builtin.set_fact:
-    arch_install_root_partuuid_final: "{{ arch_install_root_partuuid.stdout | default(arch_install_root_partuuid_uefi.stdout) }}"
+    arch_install_root_partuuid_final: >-
+      {{ arch_install_root_partuuid.stdout
+         | default(arch_install_root_partuuid_uefi.stdout) }}
 
 # CPU microcode must be loaded before the initramfs, or updates never apply
 - name: Set microcode image fact
@@ -56,9 +58,10 @@
           MENU LABEL Arch Linux
           LINUX ../vmlinuz-linux-lts
           APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
-          INITRD {{ ('../' ~ arch_install_ucode_img ~ ',') if arch_install_ucode_img else '' }}../initramfs-linux-lts.img
+          INITRD {{ ('../' ~ arch_install_ucode_img ~ ',')
+                    if arch_install_ucode_img else '' }}../initramfs-linux-lts.img
   when: arch_install_boot_mode == 'bios'
-  notify: install syslinux mbr
+  notify: Install syslinux mbr
 
 # UEFI: limine
 - name: Ensure EFI directories exist (UEFI)

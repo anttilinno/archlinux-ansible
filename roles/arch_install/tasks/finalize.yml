@@ -27,7 +27,9 @@
   ansible.builtin.shell: "sleep 2 && systemctl reboot"
   async: 1
   poll: 0
-  ignore_errors: true
+  # The host goes down mid-command, so any result is expected and meaningless.
+  failed_when: false
+  changed_when: true
   when: arch_install_perform_reboot | bool
 
 # Stop this play so we don't wait for SSH to return

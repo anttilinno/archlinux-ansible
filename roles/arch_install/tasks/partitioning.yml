@@ -1,5 +1,7 @@
 ---
 - name: Partitioning block
+  tags:
+    - partitioning
   block:
     - name: Unmount any mounted partitions on disk
       ansible.builtin.shell: |
@@ -74,8 +76,11 @@
         parted -s {{ arch_install_disk }} mklabel gpt
         parted -s {{ arch_install_disk }} mkpart primary fat32 1MiB {{ arch_install_efi_size_mb }}MiB
         parted -s {{ arch_install_disk }} set 1 esp on
-        parted -s {{ arch_install_disk }} mkpart primary linux-swap {{ arch_install_efi_size_mb }}MiB {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB
-        parted -s {{ arch_install_disk }} mkpart primary ext4 {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB 100%
+        parted -s {{ arch_install_disk }} mkpart primary linux-swap \
+          {{ arch_install_efi_size_mb }}MiB \
+          {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB
+        parted -s {{ arch_install_disk }} mkpart primary ext4 \
+          {{ arch_install_efi_size_mb | int + arch_install_swap_size_mb | int }}MiB 100%
         partprobe {{ arch_install_disk }}
       when:
         - arch_install_boot_mode == 'uefi'
@@ -135,6 +140,3 @@
     - name: Partitioning failed
       ansible.builtin.fail:
         msg: "Partitioning failed. Check disk {{ arch_install_disk }} status and permissions."
-
-  tags:
-    - partitioning

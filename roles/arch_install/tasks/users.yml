@@ -77,6 +77,6 @@
 
 - name: Fix ownership of home directory
   ansible.builtin.command: >
-    arch-chroot /mnt chown -R {{ arch_install_admin_user }}:{{ arch_install_admin_user }} /home/{{ arch_install_admin_user }}
+    arch-chroot /mnt chown -R {{ arch_install_admin_user }}:{{ arch_install_admin_user }}
+    /home/{{ arch_install_admin_user }}
   changed_when: true
-
