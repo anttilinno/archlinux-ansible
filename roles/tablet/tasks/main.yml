@@ -3,6 +3,17 @@
 # Kernel hid_uclogic sends fixed keystrokes by default; OTD takes raw HID
 # access (its package ships the udev rules) so keys/dial can be rebound.
 
+- name: Install .NET runtime matching the SDK
+  # dotnet-runtime-8.0 provides= dotnet-runtime, so pacman treats dotnet-sdk's
+  # dependency as satisfied and never pulls the matching major runtime. The
+  # OTD build then dies with "You must install or update .NET to run this
+  # application". Install it explicitly.
+  community.general.pacman:
+    name: "{{ tablet_packages }}"
+    state: present
+  when: tablet_enabled | bool
+  tags: [packages, tablet]
+
 - name: Install OpenTabletDriver from AUR
   ansible.builtin.command: yay -S --noconfirm --needed {{ tablet_aur_packages | join(' ') }}
   register: tablet_aur_result
@@ -12,6 +23,17 @@
   notify: Reload udev rules
   when: tablet_enabled | bool
   tags: [packages, aur, tablet]
+
+- name: Unload hid_uclogic so OpenTabletDriver can claim the tablet
+  # OTD ships /usr/lib/modprobe.d/99-opentabletdriver.conf to stop hid_uclogic
+  # loading, but that only takes effect at the next boot. If it is already
+  # bound, OTD logs "'UC Logic' driver is detected. It will block detection of
+  # tablets" and finds nothing. Unloading rebinds the device to hid-generic.
+  community.general.modprobe:
+    name: hid_uclogic
+    state: absent
+  when: tablet_enabled | bool
+  tags: [tablet]
 
 - name: Look up target user uid for the user session bus
   ansible.builtin.getent:

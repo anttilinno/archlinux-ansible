@@ -3,6 +3,10 @@
 
 tablet_enabled: false
 
+# Build prerequisite: the current-major .NET runtime the AUR build needs
+tablet_packages:
+  - dotnet-runtime
+
 # AUR package providing the driver, daemon and udev rules
 tablet_aur_packages:
   - opentabletdriver
