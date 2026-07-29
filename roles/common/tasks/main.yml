@@ -15,7 +15,7 @@
 
 - name: Get installed yay version
   ansible.builtin.command: pacman -Q yay-bin
-  register: yay_installed
+  register: common_yay_installed
   changed_when: false
   failed_when: false
   tags: [aur, yay]
@@ -24,25 +24,35 @@
   ansible.builtin.uri:
     url: https://aur.archlinux.org/rpc/v5/info?arg[]=yay-bin
     return_content: true
-  register: yay_aur
+  register: common_yay_aur
   tags: [aur, yay]
 
+# Both guards exist for check mode, where the tasks above do not really run:
+# the command registers rc 0 with an empty stdout, and the uri registers no
+# .json at all. Falling back to 'none' for both makes the versions compare
+# equal, so the build tasks below skip instead of erroring.
+# The stdout guard doubles as the not-installed case, where pacman -Q exits
+# non-zero and leaves stdout empty.
 - name: Set yay version facts
   ansible.builtin.set_fact:
-    yay_current_version: "{{ yay_installed.stdout.split(' ')[1] | default('none') if yay_installed.rc == 0 else 'none' }}"
-    yay_latest_version: "{{ yay_aur.json.results[0].Version }}"
+    common_yay_current_version: >-
+      {{ common_yay_installed.stdout.split(' ')[1]
+         if common_yay_installed.stdout.split(' ') | length > 1 else 'none' }}
+    common_yay_latest_version: >-
+      {{ common_yay_aur.json.results[0].Version
+         if common_yay_aur.json is defined else 'none' }}
   tags: [aur, yay]
 
 - name: Show yay version status
   ansible.builtin.debug:
-    msg: "yay: installed={{ yay_current_version }} latest={{ yay_latest_version }}"
+    msg: "yay: installed={{ common_yay_current_version }} latest={{ common_yay_latest_version }}"
   tags: [aur, yay]
 
 - name: Clean up previous yay build directory
   ansible.builtin.file:
     path: /tmp/yay-bin
     state: absent
-  when: yay_current_version != yay_latest_version
+  when: common_yay_current_version != common_yay_latest_version
   tags: [aur, yay]
 
 - name: Clone yay-bin from AUR
@@ -50,7 +60,7 @@
     repo: https://aur.archlinux.org/yay-bin.git
     dest: /tmp/yay-bin
     version: master
-  when: yay_current_version != yay_latest_version
+  when: common_yay_current_version != common_yay_latest_version
   become: true
   become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
   tags: [aur, yay]
@@ -59,7 +69,7 @@
   ansible.builtin.command: makepkg -si --noconfirm
   args:
     chdir: /tmp/yay-bin
-  when: yay_current_version != yay_latest_version
+  when: common_yay_current_version != common_yay_latest_version
   become: true
   become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
   tags: [aur, yay]
@@ -68,7 +78,7 @@
   ansible.builtin.file:
     path: /tmp/yay-bin
     state: absent
-  when: yay_current_version != yay_latest_version
+  when: common_yay_current_version != common_yay_latest_version
   tags: [aur, yay]
 
 - name: Install CLI tools
@@ -302,5 +312,5 @@
     path: /etc/systemd/journald.conf
     regexp: '^#?Storage='
     line: 'Storage=persistent'
-  notify: restart journald
+  notify: Restart journald
   tags: [journald]
