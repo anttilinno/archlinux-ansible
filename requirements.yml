@@ -8,5 +8,5 @@ collections:
 
 # Add Galaxy roles as needed
 roles: []
-  # - src: geerlingguy.docker
-  #   version: 7.0.2
+# - src: geerlingguy.docker
+#   version: 7.0.2

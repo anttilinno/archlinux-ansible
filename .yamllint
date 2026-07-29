@@ -5,28 +5,32 @@ rules:
   line-length:
     max: 120
     level: warning
-  
+
   indentation:
     spaces: 2
     indent-sequences: true
-  
+
   comments:
     min-spaces-from-content: 1
-  
-  comments-indentation: {}
-  
+
+  # The three settings below are required for compatibility with ansible-lint's
+  # yaml rule; it warns and disables its fix mode if they differ.
+  comments-indentation: false
+
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
   braces:
     max-spaces-inside: 1
-  
+
   brackets:
     max-spaces-inside: 1
-  
+
   truthy:
     allowed-values: ['true', 'false', 'yes', 'no']
     check-keys: false
 
-ignore: |
-  .cache/
-  .git/
-  venv/
-
+# Skip whatever git skips: caches, venvs, and the machine-specific inventory
+# files (only their *.example templates are tracked, and those are linted).
+ignore-from-file: .gitignore

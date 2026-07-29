@@ -1,19 +1,33 @@
+[tools]
+# Linters used by `mise run lint`. pipx backend resolves through uv.
+yamllint = "latest"
+"pipx:ansible-lint" = "latest"
+
 [tasks.setup]
 description = "Interactive wizard to configure provisioning inventory"
 run = "bash scripts/setup-wizard.sh"
 
 [tasks.install]
 description = "Install Ansible and required collections"
-run = "ansible-galaxy install -r requirements.yml"
+# -p is required. Arch's `ansible` package bundles community.general inside
+# site-packages, so a bare `ansible-galaxy install` reports "already installed"
+# and writes nothing -- but ansible-lint runs its own isolated ansible-core
+# that cannot see site-packages, and fails with syntax-check[unknown-module].
+# --force is required too: without it galaxy still finds the site-packages copy
+# and reports "Nothing to do", leaving ~/.ansible/collections empty.
+run = "ansible-galaxy collection install -r requirements.yml -p ~/.ansible/collections --force"
 
 [tasks.lint]
 description = "Run yamllint and ansible-lint"
 run = """
+# Both always run; a yamllint failure must not hide the ansible-lint report.
+rc=0
 echo "Running yamllint..."
-yamllint .
+yamllint . || rc=1
 echo ""
 echo "Running ansible-lint..."
-ansible-lint
+ansible-lint || rc=1
+exit $rc
 """
 
 [tasks.syntax]

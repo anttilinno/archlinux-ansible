@@ -8,8 +8,12 @@ exclude_paths:
   - .git/
   - venv/
 
-# Enable offline mode (don't check for new rules)
-offline: false
+# Offline mode. Must stay true: when online, ansible-lint runs its own
+# `ansible-galaxy collection install -r requirements.yml`, which finds the
+# collections already present and writes an empty stub into
+# .ansible/collections/. That stub then shadows the real collection and every
+# community.general module reports as syntax-check[unknown-module].
+offline: true
 
 # List of rules to skip
 skip_list:
@@ -32,14 +36,14 @@ enable_list:
 # Use the default set of rules
 use_default_rules: true
 
-# Mock modules and roles that might not be available
-mock_modules:
-  - community.general.parted
-  - community.general.filesystem
-  - community.general.pacman
+# Do NOT add mock_modules here. ansible-lint materialises each entry as a stub
+# .py inside the collections path, and ansible.cfg points collections_path at
+# ~/.ansible/collections — so mocking a real module overwrites it and every
+# subsequent playbook run fails with "Unsupported parameters ... Supported
+# parameters include: ." Install the collection instead (mise run install).
+mock_modules: []
 
 mock_roles: []
 
 # Write JSON output for easier parsing
 # parseable: true
-
