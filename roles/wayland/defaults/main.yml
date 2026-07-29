@@ -26,11 +26,23 @@ wayland_utils_packages:
   - wpaperd
   - swaylock
 
-# PDF viewer (keyboard-driven, mupdf backend)
+# Documents and drawing.
+#   zathura   - keyboard-driven PDF viewer (poppler backend), read-only
+#   xournalpp - PDF annotation and handwritten notes, pressure-aware
+#   krita     - digital painting; the heavy one, ~200 MB installed
+# Krita is why retro_laptops.yml.example turns this group off.
+#
+# Poppler rather than mupdf as the zathura backend: zathura-pdf-mupdf pulls
+# libmupdf -> tesseract, which depends on the virtual `tessdata`. That has 128
+# providers, so under --noconfirm pacman silently takes default=1 and installs
+# tesseract-data-afr (Afrikaans OCR data). Poppler avoids the chain entirely,
+# and xournalpp already depends on poppler-glib.
 wayland_zathura_enabled: true
 wayland_zathura_packages:
   - zathura
-  - zathura-pdf-mupdf
+  - zathura-pdf-poppler
+  - xournalpp
+  - krita
 
 # Dank Material Shell (Quickshell-based desktop shell)
 # Repo: https://github.com/AvengeMedia/DankMaterialShell

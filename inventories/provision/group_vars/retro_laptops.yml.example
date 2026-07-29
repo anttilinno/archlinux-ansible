@@ -88,3 +88,5 @@ kodi_autologin_enabled: false
 wayland_niri_enabled: false
 wayland_bar_enabled: false
 wayland_utils_enabled: false
+# Defaults to true, and now pulls krita (~200 MB) alongside zathura
+wayland_zathura_enabled: false

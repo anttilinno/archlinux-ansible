@@ -82,7 +82,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `wayland_niri_enabled`: niri, xorg-xwayland, xwayland-satellite, xdg-desktop-portal-gnome
 - `wayland_bar_enabled`: waybar
 - `wayland_utils_enabled`: fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd, swaylock
-- `wayland_zathura_enabled`: zathura, zathura-pdf-mupdf (keyboard-driven PDF viewer)
+- `wayland_zathura_enabled`: zathura + zathura-pdf-poppler (keyboard-driven PDF viewer), xournalpp (PDF annotation / handwritten notes), krita (digital painting). Poppler not mupdf: `zathura-pdf-mupdf` pulls libmupdf → tesseract → the virtual `tessdata`, which has 128 providers, so `--noconfirm` silently installs tesseract-data-afr. Group defaults to true and now pulls ~200 MB of krita, so `retro_laptops.yml.example` disables it.
 - `wayland_dms_enabled`: (default on) Dank Material Shell (Quickshell-based desktop shell) + deps (pacman: quickshell, dgop, cava, ddcutil, cliphist, etc.; AUR: dms-shell-git, matugen-bin, ttf-material-symbols-variable-git); enables `dms.service` via `systemctl --global`
 - `wayland_autologin_enabled`: auto-start niri on tty1 via getty autologin, written to both `.bash_profile` and `.zprofile` (user: `wayland_autologin_user`)
 

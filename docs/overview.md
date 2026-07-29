@@ -183,7 +183,7 @@ Each group can be toggled independently.
 | `wayland_niri_enabled` | on | niri, xorg-xwayland, xwayland-satellite, xdg-desktop-portal-gnome |
 | `wayland_bar_enabled` | on | waybar |
 | `wayland_utils_enabled` | on | fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd, swaylock |
-| `wayland_zathura_enabled` | on | zathura, zathura-pdf-mupdf |
+| `wayland_zathura_enabled` | on | zathura, zathura-pdf-poppler, xournalpp, krita |
 | `wayland_dms_enabled` | on | quickshell, dgop, cava, ddcutil, cliphist, qt6ct, wtype, … (+ AUR: dms-shell-git, matugen-bin, ttf-material-symbols-variable-git) |
 | `wayland_autologin_enabled` | off | none — configures getty autologin on tty1 |
 
