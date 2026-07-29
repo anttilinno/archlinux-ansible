@@ -8,8 +8,9 @@ Two-stage Arch Linux deployment system for laptops and desktops.
 ## Quick Start
 
 ```bash
-# Install Ansible collections
-ansible-galaxy install -r requirements.yml
+# Install Ansible collections (or: mise run install)
+# -p and --force are both needed; see docs/overview.md#development
+ansible-galaxy collection install -r requirements.yml -p ~/.ansible/collections --force
 
 # Copy inventory templates and customize
 cp inventories/install/hosts.ini.example inventories/install/hosts.ini
@@ -32,6 +33,7 @@ cp inventories/provision/host_vars/archbox.yml.example inventories/provision/hos
 - [Overview](docs/overview.md) - Architecture and package groups
 - [Configuration](docs/configuration.md) - All variables and options
 - [Machine Management](docs/machine-management.md) - Managing multiple machines
+- [Roadmap](docs/roadmap.md) - What is verified, what still needs a real install
 
 ## License
 

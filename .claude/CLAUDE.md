@@ -12,7 +12,7 @@ Two-stage Arch Linux deployment system for laptops and desktops:
 
 ### From controller (remote execution)
 ```bash
-ansible-galaxy install -r requirements.yml  # Install collections
+mise run install                           # Install collections (see Linting below)
 
 # Installation (DESTRUCTIVE - from Arch ISO)
 ./run.sh install                # Run installation playbook
@@ -40,9 +40,24 @@ mise run test                   # Run all quality checks
 Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitignored. Tracked `*.example` files serve as templates — copy them without the `.example` suffix and customize locally.
 
 ### Roles
+Stage 0 runs `arch_install` alone. Stage 1 (`site.yml`) runs the rest in this order: common, laptop, wayland, tablet, esp32, gaming, ollama, kodi. Each is gated by its own `*_enabled` variables.
+
 - **arch_install**: Complete Arch installation (partitioning, pacstrap, bootloader). Supports BIOS/UEFI, Intel/AMD CPUs, Intel/AMD/NVIDIA GPUs.
-- **common**: Package groups and services. Each group is toggleable via `common_*_enabled` variables in `inventories/provision/group_vars/all.yml`.
+- **common**: Package groups and services. Each group is toggleable via `common_*_enabled` variables in `inventories/provision/group_vars/all.yml`. Also bootstraps `yay`, which every other role's AUR tasks depend on.
+- **laptop**: Battery charge limiting via sysfs (`laptop_battery_charge_limit_enabled`, `laptop_battery`, default `BAT0`). Off by default.
 - **wayland**: Wayland compositor (niri) and utilities. Each group is toggleable via `wayland_*_enabled` variables.
+- **tablet**: OpenTabletDriver for Huion/UGEE graphics tablets and keydials (KD100, HS610, …). Off by default. See the notes below — two non-obvious workarounds live here.
+- **esp32**: arduino-cli, python-pyserial, udisks2 + serial group membership for `esp32_user`. On by default.
+- **gaming**: Enables multilib, then Steam/Wine/gamemode/NVIDIA-32bit/AUR extras via `gaming_*_enabled`. All off by default.
+- **ollama**: Local LLM runtime — `ollama_enabled` for the CPU build, `ollama_cuda_enabled` for the AUR CUDA build. Both off by default.
+- **kodi**: Media centre with optional codecs, addons, USB automount and i3 autologin. All off by default.
+
+### tablet role gotchas
+Two things that look like bugs but are deliberate:
+- The role installs `dotnet-runtime` explicitly before the AUR build. Arch's `dotnet-runtime-8.0` declares `provides=dotnet-runtime`, so pacman treats `dotnet-sdk`'s dependency as satisfied and never pulls the matching major runtime; the OTD build then fails with `You must install or update .NET to run this application`.
+- The role unloads `hid_uclogic`. OTD ships `/usr/lib/modprobe.d/99-opentabletdriver.conf` to stop it loading, but that only applies at the next boot. While the module is still bound, OTD logs `'UC Logic' driver is detected. It will block detection of tablets` and finds nothing.
+
+Per-device config (key bindings, dial, mapped area) is NOT managed by Ansible — it lives in `~/.config/OpenTabletDriver/`, written by the `otd` CLI or GUI.
 
 ### Package Groups (common role)
 Toggle groups by editing `inventories/provision/group_vars/all.yml`:
@@ -83,6 +98,23 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - Required collections: `community.general >=8.0`, `ansible.posix >=1.5`
 - Tasks tagged for selective execution (`--tags partitioning`, `--skip-tags bootloader`)
 - AUR packages use `become_user` to run as non-root
+- Variables registered or set inside a role must carry the role's prefix (`common_yay_installed`, not `yay_installed`) — ansible-lint's `var-naming[no-role-prefix]` enforces this
+
+## Linting
+
+`mise run test` = syntax check + yamllint + ansible-lint. The tree is clean at ansible-lint's `production` profile; keep it that way. Linters are pinned in `.mise.toml` under `[tools]` and installed by `mise install`.
+
+Three constraints that are easy to break by "tidying" config:
+
+- **`mise run install` must use `-p ~/.ansible/collections --force`.** Arch's `ansible` package bundles `community.general` inside site-packages. The playbooks can use it, but ansible-lint runs its own isolated `ansible-core` that cannot see site-packages and fails with `syntax-check[unknown-module]`. Without `--force`, galaxy finds the site-packages copy and reports "Nothing to do", leaving the galaxy path empty.
+- **`mock_modules` in `.ansible-lint` must stay empty.** ansible-lint materialises each entry as a stub `.py` inside the collections path. Since `ansible.cfg` points `collections_path` at `~/.ansible/collections`, mocking a real module overwrites it and every later playbook run fails with `Unsupported parameters ... Supported parameters include: .`
+- **`offline: true` in `.ansible-lint` must stay true.** Online, ansible-lint runs its own `ansible-galaxy collection install` and leaves an empty stub that shadows the real collection.
+
+`.yamllint` sets `comments-indentation: false` and both `octal-values` forbids because ansible-lint warns and disables its fix mode otherwise. It takes its ignore list from `.gitignore` via `ignore-from-file`.
+
+`mise run check` runs `site.yml` against every host in the provision inventory, so it fails with `UNREACHABLE` if one is powered off. Scope it with `--limit <host>`.
+
+Check mode does not really run `command`/`uri` tasks, but still registers a result: a `command` registers `rc: 0` with an empty `stdout`, a `uri` registers no `.json` at all. Any `set_fact` reading a registered value needs a guard for that — see the yay version facts in `roles/common/tasks/main.yml`, which fall back to `'none'` so the two versions compare equal and the build tasks skip.
 
 ## Safety Features
 
