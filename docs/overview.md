@@ -140,9 +140,9 @@ The wireless Neverstop models speak IPP Everywhere/AirPrint, and CUPS 2.x
 creates a temporary queue for any printer it discovers over DNS-SD, so the
 default path is `cups` plus `avahi-daemon.service`; `cups` already pulls in
 avahi and cups-filters. Two packages beyond that are not optional, and both
-fail silently — see the note below. `print_scanner_enabled` (on) adds
+fail silently — see the note below. `print_scanner_enabled` (off) adds
 sane-airscan and simple-scan for driverless eSCL scanning on the MFP 1200
-models.
+models; the 1000/1000w are print-only and advertise `Scan=F`.
 
 `print_hplip_enabled` (off) is the fallback for when the driverless queue
 misbehaves or the printer is on USB. HPLIP's Neverstop PPDs are reported by
@@ -230,7 +230,7 @@ Each group can be toggled independently.
 | `laptop_battery_charge_limit_enabled` | off | none — writes the sysfs charge threshold |
 | `esp32_enabled` | on | arduino-cli, python-pyserial, udisks2 |
 | `print_enabled` | off | cups, nss-mdns, ghostscript |
-| `print_scanner_enabled` | on | sane-airscan, simple-scan |
+| `print_scanner_enabled` | off | sane-airscan, simple-scan |
 | `print_hplip_enabled` | off | hplip, python-pyqt5, usbutils |
 | `print_hplip_plugin_enabled` | on | hplip-plugin (AUR) |
 | `gaming_steam_enabled` | off | steam, lib32-vulkan-icd-loader, lib32-mesa |

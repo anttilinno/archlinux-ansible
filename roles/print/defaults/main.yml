@@ -42,8 +42,9 @@ print_hplip_aur_packages:
   - hplip-plugin
 
 # Scanner half of the MFP 1200 series, driverless over the network (eSCL).
-# sane-airscan pulls in sane and avahi.
-print_scanner_enabled: true
+# sane-airscan pulls in sane and avahi. Off by default: the plain 1000/1000w
+# are print-only, and advertise it as Scan=F in their DNS-SD TXT record.
+print_scanner_enabled: false
 print_scanner_packages:
   - sane-airscan
   - simple-scan

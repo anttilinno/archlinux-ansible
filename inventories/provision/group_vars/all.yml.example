@@ -58,7 +58,7 @@ esp32_enabled: true
 
 # Printing - CUPS driverless over wifi (HP Neverstop Laser); hplip is a fallback
 print_enabled: false
-print_scanner_enabled: true
+print_scanner_enabled: false
 print_hplip_enabled: false
 print_hplip_plugin_enabled: true
 
