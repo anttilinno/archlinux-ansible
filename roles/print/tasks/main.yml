@@ -1,0 +1,66 @@
+---
+# print role tasks — CUPS for an HP Neverstop Laser reached over wifi
+
+- name: Install CUPS
+  community.general.pacman:
+    name: "{{ print_packages }}"
+    state: present
+  when: print_enabled | bool
+  tags: [packages, print]
+
+- name: Resolve .local printer names through mDNS
+  # mdns_minimal only answers for *.local and returns UNAVAIL for everything
+  # else, so it is safe ahead of the rest of the line; NOTFOUND=return keeps a
+  # missing .local name from falling through to a slow unicast DNS lookup.
+  ansible.builtin.lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: '^hosts:\s+(?!.*mdns_minimal)(.*)$'
+    line: 'hosts: mdns_minimal [NOTFOUND=return] \1'
+    backrefs: true
+  notify: Restart CUPS
+  when: print_enabled | bool
+  tags: [print]
+
+- name: Install scanner support
+  community.general.pacman:
+    name: "{{ print_scanner_packages }}"
+    state: present
+  when: print_enabled | bool and print_scanner_enabled | bool
+  tags: [packages, print, scanner]
+
+- name: Install HPLIP driver
+  community.general.pacman:
+    name: "{{ print_hplip_packages }}"
+    state: present
+  when: print_enabled | bool and print_hplip_enabled | bool
+  tags: [packages, print]
+
+- name: Install HPLIP binary plugin from AUR
+  become: true
+  become_user: "{{ print_user }}"
+  ansible.builtin.command: yay -S --noconfirm --needed {{ print_hplip_aur_packages | join(' ') }}
+  register: print_aur_result
+  changed_when: "'installing' in print_aur_result.stdout"
+  when: print_enabled | bool and print_hplip_enabled | bool and print_hplip_plugin_enabled | bool
+  tags: [packages, aur, print]
+
+- name: Enable printing services
+  # avahi-daemon is what makes the printer discoverable; without it CUPS never
+  # sees the wireless Neverstop and no temporary queue appears.
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - cups.service
+    - avahi-daemon.service
+  when: print_enabled | bool
+  tags: [print, service]
+
+- name: Add user to the CUPS admin group
+  ansible.builtin.user:
+    name: "{{ print_user }}"
+    groups: sys
+    append: true
+  when: print_enabled | bool
+  tags: [print]

@@ -56,6 +56,12 @@ common_office_enabled: true
 # ESP32 development (arduino-cli, serial permissions, udev rules)
 esp32_enabled: true
 
+# Printing - CUPS driverless over wifi (HP Neverstop Laser); hplip is a fallback
+print_enabled: false
+print_scanner_enabled: true
+print_hplip_enabled: false
+print_hplip_plugin_enabled: true
+
 # Gaming - Steam, Heroic (Epic+GOG), Wine, performance tools
 gaming_steam_enabled: true
 gaming_performance_enabled: true

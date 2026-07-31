@@ -1,0 +1,9 @@
+---
+# print role handlers
+
+- name: Restart CUPS
+  # glibc caches nsswitch.conf per process, so cupsd keeps failing to resolve
+  # the printer's .local name until it is restarted.
+  ansible.builtin.systemd:
+    name: cups.service
+    state: restarted

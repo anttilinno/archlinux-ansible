@@ -34,7 +34,7 @@ Target ──local──> Ansible
 ```
 
 **Playbook**: `site.yml`
-**Roles**: `common`, `laptop`, `wayland`, `tablet`, `esp32`, `gaming`, `ollama`, `kodi`
+**Roles**: `common`, `laptop`, `wayland`, `tablet`, `esp32`, `print`, `gaming`, `ollama`, `kodi`
 **Inventory**: `inventories/provision/`
 
 Roles run in the order listed above. Each is gated by its own `*_enabled`
@@ -61,6 +61,7 @@ variables, so a role with everything disabled costs only skipped tasks.
     ├── wayland/          # niri compositor, bar, utilities, DMS shell
     ├── tablet/           # OpenTabletDriver for Huion/UGEE tablets
     ├── esp32/            # Arduino CLI and serial port access
+    ├── print/            # CUPS for the HP Neverstop Laser
     ├── gaming/           # Steam, Wine, performance tools
     ├── ollama/           # Local LLM runtime (CPU or CUDA)
     └── kodi/             # Media centre
@@ -131,6 +132,39 @@ the GUI.
 Arduino CLI, `python-pyserial` and `udisks2`, plus serial group membership for
 `esp32_user`. On by default.
 
+### print
+
+CUPS for the HP Neverstop Laser 1000/1200 series over wifi. Off by default.
+
+The wireless Neverstop models speak IPP Everywhere/AirPrint, and CUPS 2.x
+creates a temporary queue for any printer it discovers over DNS-SD, so the
+default path is `cups` plus `avahi-daemon.service`; `cups` already pulls in
+avahi and cups-filters. Two packages beyond that are not optional, and both
+fail silently — see the note below. `print_scanner_enabled` (on) adds
+sane-airscan and simple-scan for driverless eSCL scanning on the MFP 1200
+models.
+
+`print_hplip_enabled` (off) is the fallback for when the driverless queue
+misbehaves or the printer is on USB. HPLIP's Neverstop PPDs are reported by
+`lpinfo -m` as *requires proprietary plugin*, so `print_hplip_plugin_enabled`
+(on) also builds `hplip-plugin` from the AUR — with hplip but no plugin the
+queue accepts jobs and the printer stays silent.
+
+Two dependencies that look optional but are not:
+
+- **nss-mdns.** Avahi discovers the printer, but CUPS then connects to the
+  `.local` hostname from the DNS-SD record through plain `getaddrinfo()`. With
+  no mdns entry in `nsswitch.conf` the queue exists, jobs disappear, and the
+  only trace is `Unable to connect to NPIE2DEA0.local:631: Name or service not
+  known` in `/var/log/cups/error_log`. The role prepends
+  `mdns_minimal [NOTFOUND=return]` to the `hosts:` line and restarts cupsd,
+  because glibc caches nsswitch.conf per process.
+- **ghostscript.** Only an *optional* dependency of cups-filters, but the
+  Neverstop takes PCLm/URF rather than PDF, so every job runs through
+  `cfFilterGhostscript`. Without it the job is accepted, the filter dies with
+  `Unable to launch Ghostscript: gs: No such file or directory`, and the queue
+  returns to idle having printed nothing.
+
 ### gaming
 
 Enables the multilib repository, then installs Steam and Vulkan
@@ -195,6 +229,10 @@ Each group can be toggled independently.
 | `tablet_service_enabled` | on | none — enables the per-user `opentabletdriver.service` |
 | `laptop_battery_charge_limit_enabled` | off | none — writes the sysfs charge threshold |
 | `esp32_enabled` | on | arduino-cli, python-pyserial, udisks2 |
+| `print_enabled` | off | cups, nss-mdns, ghostscript |
+| `print_scanner_enabled` | on | sane-airscan, simple-scan |
+| `print_hplip_enabled` | off | hplip, python-pyqt5, usbutils |
+| `print_hplip_plugin_enabled` | on | hplip-plugin (AUR) |
 | `gaming_steam_enabled` | off | steam, lib32-vulkan-icd-loader, lib32-mesa |
 | `gaming_performance_enabled` | off | gamemode, mangohud, lib32-mangohud |
 | `gaming_wine_enabled` | off | wine, wine-mono, wine-gecko, winetricks |

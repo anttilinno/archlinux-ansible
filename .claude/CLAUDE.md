@@ -40,7 +40,7 @@ mise run test                   # Run all quality checks
 Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitignored. Tracked `*.example` files serve as templates — copy them without the `.example` suffix and customize locally.
 
 ### Roles
-Stage 0 runs `arch_install` alone. Stage 1 (`site.yml`) runs the rest in this order: common, laptop, wayland, tablet, esp32, gaming, ollama, kodi. Each is gated by its own `*_enabled` variables.
+Stage 0 runs `arch_install` alone. Stage 1 (`site.yml`) runs the rest in this order: common, laptop, wayland, tablet, esp32, print, gaming, ollama, kodi. Each is gated by its own `*_enabled` variables.
 
 - **arch_install**: Complete Arch installation (partitioning, pacstrap, bootloader). Supports BIOS/UEFI, Intel/AMD CPUs, Intel/AMD/NVIDIA GPUs.
 - **common**: Package groups and services. Each group is toggleable via `common_*_enabled` variables in `inventories/provision/group_vars/all.yml`. Also bootstraps `yay`, which every other role's AUR tasks depend on.
@@ -48,9 +48,15 @@ Stage 0 runs `arch_install` alone. Stage 1 (`site.yml`) runs the rest in this or
 - **wayland**: Wayland compositor (niri) and utilities. Each group is toggleable via `wayland_*_enabled` variables.
 - **tablet**: OpenTabletDriver for Huion/UGEE graphics tablets and keydials (KD100, HS610, …). Off by default. See the notes below — two non-obvious workarounds live here.
 - **esp32**: arduino-cli, python-pyserial, udisks2 + serial group membership for `esp32_user`. On by default.
+- **print**: CUPS for the HP Neverstop Laser over wifi. Off by default (`print_enabled`). Default path is driverless — `cups` plus `avahi-daemon.service`; CUPS 2.x auto-creates a temporary queue for the DNS-SD-discovered printer. `nss-mdns` and `ghostscript` are in `print_packages` because both fail silently without it — see the notes below. `print_scanner_enabled` (on) adds sane-airscan + simple-scan for eSCL scanning on the MFP 1200 models. `print_hplip_enabled` (off) is the fallback; it drags in `hplip-plugin` from the AUR because the Neverstop PPDs are marked `requires proprietary plugin` — hplip without the plugin gives a queue that accepts jobs while the printer stays silent.
 - **gaming**: Enables multilib, then Steam/Wine/gamemode/NVIDIA-32bit/AUR extras via `gaming_*_enabled`. All off by default.
 - **ollama**: Local LLM runtime — `ollama_enabled` for the CPU build, `ollama_cuda_enabled` for the AUR CUDA build. Both off by default.
 - **kodi**: Media centre with optional codecs, addons, USB automount and i3 autologin. All off by default.
+
+### print role gotchas
+Both of these produce a queue that accepts jobs and prints nothing:
+- **nss-mdns.** Avahi finds the printer, but CUPS resolves the `.local` hostname from the DNS-SD record through plain `getaddrinfo()`. Without an mdns entry in `nsswitch.conf` the only trace is `Unable to connect to NPIE2DEA0.local:631: Name or service not known` in `/var/log/cups/error_log`. The role prepends `mdns_minimal [NOTFOUND=return]` to the `hosts:` line and restarts cupsd — glibc caches nsswitch.conf per process.
+- **ghostscript.** Only an optional dep of `cups-filters`, but the Neverstop takes PCLm/URF rather than PDF, so every job goes through `cfFilterGhostscript`, which dies with `Unable to launch Ghostscript: gs: No such file or directory`.
 
 ### tablet role gotchas
 Two things that look like bugs but are deliberate:

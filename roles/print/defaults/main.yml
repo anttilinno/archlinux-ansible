@@ -1,0 +1,53 @@
+---
+# print role defaults — CUPS for the HP Neverstop Laser 1000/1200 series over wifi
+
+print_enabled: false
+
+# cups already depends on avahi and cups-filters, and CUPS 2.x creates a
+# temporary queue by itself for any DNS-SD-discovered IPP Everywhere/AirPrint
+# printer — which the wireless Neverstop models are.
+#
+# nss-mdns is not optional: avahi finds the printer, but CUPS then connects to
+# the .local hostname from the DNS-SD record through plain getaddrinfo(). With
+# no mdns entry in nsswitch.conf the queue appears, jobs vanish, and the only
+# trace is "Unable to connect to NPIE2DEA0.local:631: Name or service not
+# known" in /var/log/cups/error_log.
+#
+# ghostscript is an optional dep of cups-filters, but a hard requirement here:
+# the Neverstop takes PCLm/URF rather than PDF, so every job runs through
+# cfFilterGhostscript. Without it the job is accepted, dies in the filter with
+# "Unable to launch Ghostscript: gs: No such file or directory", and the queue
+# goes back to idle with nothing printed.
+print_packages:
+  - cups
+  - nss-mdns
+  - ghostscript
+
+# HPLIP fallback, for when the driverless queue misprints or the printer is
+# on USB instead. Carries the Neverstop PPDs (1000/1200 since hplip 3.19.6,
+# the n/nw variants since 3.20.2); python-pyqt5 is what hp-setup's Qt frontend
+# needs, without it only `hp-setup -i` (CLI mode) works.
+print_hplip_enabled: false
+print_hplip_packages:
+  - hplip
+  - python-pyqt5
+  - usbutils
+
+# Those PPDs are listed by `lpinfo -m` as "requires proprietary plugin" — with
+# hplip but no plugin the queue accepts jobs and the printer stays silent. The
+# blob is not redistributable so it only lives in the AUR, and building it
+# downloads the .run installer from HP, so this needs internet.
+print_hplip_plugin_enabled: true
+print_hplip_aur_packages:
+  - hplip-plugin
+
+# Scanner half of the MFP 1200 series, driverless over the network (eSCL).
+# sane-airscan pulls in sane and avahi.
+print_scanner_enabled: true
+print_scanner_packages:
+  - sane-airscan
+  - simple-scan
+
+# Added to sys, the CUPS SystemGroup — i.e. allowed to administer queues from
+# the web UI at http://localhost:631.
+print_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"

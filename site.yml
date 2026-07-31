@@ -31,6 +31,9 @@
     - role: esp32
       tags:
         - esp32
+    - role: print
+      tags:
+        - print
     - role: gaming
       tags:
         - gaming
