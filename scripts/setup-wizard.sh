@@ -69,12 +69,12 @@ echo ""
 
 cli=$(ask_yn      "  CLI tools (zoxide, fzf, bat, ripgrep, btop...)" "true")
 shell=$(ask_yn    "  Shell (zsh, starship)" "true")
-git=$(ask_yn      "  Git tools (git, lazygit, github-cli)" "true")
+git=$(ask_yn      "  Git tools (git, github-cli)" "true")
 fm=$(ask_yn       "  File manager (yazi)" "true")
 terminal=$(ask_yn "  Terminal multiplexer (tmux)" "true")
 fonts=$(ask_yn    "  Fonts (JetBrains Mono Nerd, Noto emoji)" "true")
 dev=$(ask_yn      "  Development tools (chezmoi, stylua, nodejs...)" "false")
-docker=$(ask_yn   "  Docker (docker, docker-compose, lazydocker)" "false")
+docker=$(ask_yn   "  Docker (docker, docker-compose)" "false")
 devops=$(ask_yn   "  DevOps (aws-cli, kubectl, helm, opentofu)" "false")
 audio=$(ask_yn    "  Audio (pipewire, wireplumber, pavucontrol)" "false")
 bluetooth=$(ask_yn "  Bluetooth (bluez, blueman)" "false")
@@ -112,7 +112,7 @@ common_cli_enabled: ${cli}
 # Shell (zsh, starship)
 common_shell_enabled: ${shell}
 
-# Git tools (git, lazygit, github-cli)
+# Git tools (git, github-cli)
 common_git_enabled: ${git}
 
 # File manager (yazi + deps)
@@ -127,7 +127,7 @@ common_fonts_enabled: ${fonts}
 # Development tools (chezmoi, stylua, shfmt, luarocks, xh)
 common_dev_enabled: ${dev}
 
-# Docker (docker, docker-compose, lazydocker)
+# Docker (docker, docker-compose)
 common_docker_enabled: ${docker}
 
 # DevOps tools (aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin)

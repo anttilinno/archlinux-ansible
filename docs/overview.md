@@ -194,12 +194,12 @@ Each group can be toggled independently.
 |-------|----------|
 | `common_cli_enabled` | zoxide, fzf, fd, eza, bat, ripgrep, jq, btop, worktrunk |
 | `common_shell_enabled` | zsh, starship |
-| `common_git_enabled` | git, lazygit, github-cli |
+| `common_git_enabled` | git, github-cli |
 | `common_filemanager_enabled` | yazi + dependencies |
 | `common_terminal_enabled` | tmux |
 | `common_fonts_enabled` | JetBrains Mono Nerd, Noto emoji |
 | `common_dev_enabled` | stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code) |
-| `common_docker_enabled` | docker, docker-compose, lazydocker |
+| `common_docker_enabled` | docker, docker-compose |
 | `common_audio_enabled` | pipewire, wireplumber, alsa-utils |
 | `common_i3_enabled` | xorg, i3-wm, polybar, rofi, wezterm (+ AUR: xkb-switch, i3lock-color) |
 | `common_bluetooth_enabled` | bluez, bluez-utils, blueman |

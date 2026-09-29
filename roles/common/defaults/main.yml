@@ -38,7 +38,6 @@ common_keyring_packages:
 common_git_enabled: true
 common_git_packages:
   - git
-  - lazygit
   - github-cli
 
 # File manager (yazi + deps)
@@ -76,7 +75,6 @@ common_docker_enabled: false
 common_docker_packages:
   - docker
   - docker-compose
-  - lazydocker
 
 # Audio (pipewire)
 common_audio_enabled: false

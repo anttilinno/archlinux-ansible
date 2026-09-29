@@ -72,12 +72,12 @@ Set in `inventories/provision/group_vars/all.yml`. Inventory files are gitignore
 |----------|---------|----------|
 | `common_cli_enabled` | `true` | zoxide, fzf, fd, eza, bat, ripgrep, less, jq, unzip, btop, cyme, worktrunk |
 | `common_shell_enabled` | `true` | zsh, starship |
-| `common_git_enabled` | `true` | git, lazygit, github-cli |
+| `common_git_enabled` | `true` | git, github-cli |
 | `common_filemanager_enabled` | `true` | yazi, ffmpeg, 7zip, resvg, imagemagick, chafa |
 | `common_terminal_enabled` | `true` | tmux |
 | `common_fonts_enabled` | `true` | ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols-mono, noto-fonts-emoji |
 | `common_dev_enabled` | `false` | stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code) |
-| `common_docker_enabled` | `false` | docker, docker-compose, lazydocker |
+| `common_docker_enabled` | `false` | docker, docker-compose |
 | `common_devops_enabled` | `false` | aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin |
 | `common_audio_enabled` | `false` | pipewire, pipewire-pulse, wireplumber, alsa-utils, pavucontrol |
 | `common_bluetooth_enabled` | `false` | bluez, bluez-utils, blueman |

@@ -8,7 +8,7 @@ common_cli_enabled: true
 # Shell (zsh, starship)
 common_shell_enabled: true
 
-# Git tools (git, lazygit, github-cli)
+# Git tools (git, github-cli)
 common_git_enabled: true
 
 # File manager (yazi + deps)
@@ -23,7 +23,7 @@ common_fonts_enabled: true
 # Development tools (chezmoi, stylua, shfmt, luarocks, xh)
 common_dev_enabled: true
 
-# Docker (docker, docker-compose, lazydocker)
+# Docker (docker, docker-compose)
 common_docker_enabled: true
 
 # Audio/pipewire (pipewire, pipewire-pulse, wireplumber, alsa-utils)
