@@ -69,8 +69,14 @@ arch_install_gpu_packages:
     - xf86-video-amdgpu
   nvidia:
     - mesa
-    - nvidia-open-lts
+    # dkms, not the prebuilt -lts module: the prebuilt package declares an
+    # unversioned `linux-lts` dep but ships modules under a hard-coded
+    # /usr/lib/modules/<exact-kernel-version>/, so a kernel bump that lands
+    # ahead of the module rebuild upgrades the kernel alone and leaves the
+    # next boot with no nvidia.ko. dkms rebuilds against whatever is installed.
+    - nvidia-open-dkms
     - nvidia-utils
+    - linux-lts-headers  # required for dkms to build against linux-lts
   none:
     - mesa
 

@@ -14,7 +14,7 @@ Set in `inventories/install/group_vars/all.yml` or pass with `-e`.
 | `arch_install_boot_mode` | `bios` | Boot mode: `bios` or `uefi` |
 | `arch_install_wifi` | `true` | Install wifi packages |
 
-**Note**: `nvidia` GPU option includes mesa for Optimus support and uses `nvidia-lts` to match the LTS kernel.
+**Note**: `nvidia` GPU option includes mesa for Optimus support and uses `nvidia-open-dkms` plus `linux-lts-headers`, so the module is rebuilt against whatever kernel is installed. The prebuilt `nvidia-open-lts` is deliberately avoided: it depends on `linux-lts` unversioned but installs modules under a hard-coded `/usr/lib/modules/<exact-kernel-version>/`, so a kernel upgrade that lands before the matching module rebuild leaves the next boot without `nvidia.ko`.
 
 ### System
 
