@@ -19,3 +19,39 @@
   changed_when: true
   when: laptop_battery_charge_limit_enabled | bool
   tags: [laptop, battery]
+
+- name: Blacklist nouveau and nvidia modules
+  ansible.builtin.copy:
+    dest: /etc/modprobe.d/blacklist-nvidia.conf
+    content: |
+      blacklist nouveau
+      blacklist nvidia
+      blacklist nvidia_drm
+      blacklist nvidia_modeset
+      blacklist nvidia_uvm
+    mode: "0644"
+  register: laptop_nvidia_blacklist
+  when: laptop_nvidia_blacklist_enabled | bool
+  tags: [laptop, nvidia]
+
+# The kms hook pulls nouveau into the initramfs; mkinitcpio copies
+# modprobe.d in, so a rebuild makes the blacklist apply at early boot too.
+- name: Rebuild initramfs with the blacklist
+  ansible.builtin.command: mkinitcpio -P
+  changed_when: true
+  when:
+    - laptop_nvidia_blacklist_enabled | bool
+    - laptop_nvidia_blacklist is changed
+  tags: [laptop, nvidia]
+
+# With no driver bound, the PCI core only suspends the card when
+# power/control is auto; the default "on" keeps it drawing power.
+- name: Let the driverless NVIDIA GPU runtime-suspend
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/80-nvidia-pm.rules
+    content: >
+      ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de",
+      ATTR{class}=="0x03[0-9]*", TEST=="power/control", ATTR{power/control}="auto"
+    mode: "0644"
+  when: laptop_nvidia_blacklist_enabled | bool
+  tags: [laptop, nvidia]

@@ -1,0 +1,43 @@
+---
+- name: Check whether LUKS root is open
+  ansible.builtin.stat:
+    path: /dev/mapper/root
+  register: arch_install_luks_open
+
+# Re-runs without repartitioning start with the container closed
+- name: Open LUKS container
+  ansible.builtin.command: cryptsetup open --key-file=- {{ arch_install_part_prefix }}2 root
+  args:
+    stdin: "{{ arch_install_luks_passphrase }}"
+    stdin_add_newline: false
+  changed_when: true
+  no_log: true
+  when: not arch_install_luks_open.stat.exists
+
+- name: Mount LUKS root
+  ansible.posix.mount:
+    path: /mnt
+    src: /dev/mapper/root
+    fstype: ext4
+    opts: "{{ arch_install_root_mount_opts }}"
+    state: ephemeral
+
+- name: Ensure /mnt/boot exists
+  ansible.builtin.file:
+    path: /mnt/boot
+    state: directory
+    mode: '0755'
+
+- name: Mount /boot
+  ansible.posix.mount:
+    path: /mnt/boot
+    src: "{{ arch_install_part_prefix }}1"
+    fstype: vfat
+    opts: umask=0077
+    state: ephemeral
+
+# Swap inside the encrypted root: a swap partition would leak memory to disk in clear
+- name: Create swapfile
+  ansible.builtin.command: mkswap --file /mnt/swapfile --size {{ arch_install_swap_size }}
+  args:
+    creates: /mnt/swapfile

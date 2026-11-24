@@ -60,8 +60,10 @@ wayland_dms_packages:
   - qt6-multimedia
   - qt6ct
   - wtype
+  # DMS was renamed Dux Shell and moved to extra; it still ships dms.service.
+  # dms-shell-git is gone from the AUR, and yay exits 0 on a missing package.
+  - dux-shell
 wayland_dms_aur_packages:
-  - dms-shell-git
   - matugen-bin
   - ttf-material-symbols-variable-git
 

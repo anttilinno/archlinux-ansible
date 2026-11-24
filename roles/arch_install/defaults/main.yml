@@ -26,8 +26,21 @@ arch_install_root_password_hash: '!*'  # Locked by default
 arch_install_force_repartition: false
 arch_install_state_marker: /mnt/root/.ansible-stage0-done
 
+# Full root encryption (LUKS2). Layout becomes p1 /boot (unencrypted: syslinux
+# and limine can't read LUKS), p2 LUKS -> /dev/mapper/root, swap as /swapfile
+# inside it. Passphrase is prompted at install time unless
+# arch_install_luks_passphrase is set (keep it out of inventory files).
+arch_install_encrypt: false
+
+# Graphical boot: plymouth splash (also draws the LUKS passphrase prompt)
+arch_install_plymouth: false
+arch_install_plymouth_theme: bgrt
+
+# limine menu wallpaper: a PNG/JPEG/BMP on the controller, copied to /boot
+arch_install_limine_wallpaper: ''
+
 # Partition layout (use MiB for consistency)
-arch_install_efi_size: 512MiB  # UEFI only
+arch_install_efi_size: 512MiB  # UEFI ESP, and /boot when arch_install_encrypt
 arch_install_swap_size: 4096MiB
 
 # Package set (core - always installed)
@@ -84,6 +97,8 @@ arch_install_gpu_packages:
 arch_install_boot_packages:
   bios:
     - syslinux
+  bios_luks:
+    - limine
   uefi:
     - limine
     - efibootmgr

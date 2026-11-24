@@ -5,3 +5,7 @@
 laptop_battery_charge_limit_enabled: false
 laptop_battery_charge_limit: 80
 laptop_battery: BAT0
+
+# Optimus laptops run on Intel only: keep nouveau/nvidia from loading and let
+# the dGPU runtime-suspend. Needed for old Kepler cards nvidia-open can't drive.
+laptop_nvidia_blacklist_enabled: false

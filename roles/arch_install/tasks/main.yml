@@ -6,6 +6,15 @@
   tags:
     - always
 
+# limine only reads FAT, so BIOS installs use it only when LUKS forces a separate /boot
+- name: Pick bootloader
+  ansible.builtin.set_fact:
+    arch_install_bootloader: >-
+      {{ 'syslinux' if (arch_install_boot_mode == 'bios' and not arch_install_encrypt | bool)
+         else 'limine' }}
+  tags:
+    - always
+
 - name: Sanity checks
   ansible.builtin.import_tasks: sanity_checks.yml
   tags:
@@ -17,13 +26,32 @@
   tags:
     - arch_install
     - partitioning
-  when: arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+  when:
+    - not arch_install_encrypt | bool
+    - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
+
+- name: Partition and format disk (LUKS root)
+  ansible.builtin.import_tasks: partitioning_luks.yml
+  tags:
+    - arch_install
+    - partitioning
+  when:
+    - arch_install_encrypt | bool
+    - arch_install_force_repartition | bool or not arch_install_already_installed.stat.exists
 
 - name: Mount filesystems
   ansible.builtin.import_tasks: mount.yml
   tags:
     - arch_install
     - mount
+  when: not arch_install_encrypt | bool
+
+- name: Mount filesystems (LUKS root)
+  ansible.builtin.import_tasks: mount_luks.yml
+  tags:
+    - arch_install
+    - mount
+  when: arch_install_encrypt | bool
 
 - name: Configure package mirrors
   ansible.builtin.import_tasks: mirrors.yml

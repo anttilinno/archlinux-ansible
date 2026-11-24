@@ -18,3 +18,35 @@
       {% else %}
       No existing installation detected. Proceeding with fresh install.
       {% endif %}
+
+- name: LUKS passphrase prompt block
+  when:
+    - arch_install_encrypt | bool
+    - arch_install_luks_passphrase is not defined
+  block:
+    - name: Prompt for LUKS passphrase
+      ansible.builtin.pause:
+        prompt: "LUKS passphrase for the root partition"
+        echo: false
+      register: arch_install_luks_prompt1
+
+    - name: Confirm LUKS passphrase
+      ansible.builtin.pause:
+        prompt: "Repeat LUKS passphrase"
+        echo: false
+      register: arch_install_luks_prompt2
+
+    # A typo here leaves an unbootable, unrecoverable disk
+    - name: Check LUKS passphrases match
+      ansible.builtin.assert:
+        that:
+          - arch_install_luks_prompt1.user_input == arch_install_luks_prompt2.user_input
+          - arch_install_luks_prompt1.user_input | length >= 8
+        fail_msg: "Passphrases differ or are shorter than 8 characters"
+        quiet: true
+      no_log: true
+
+    - name: Set LUKS passphrase fact
+      ansible.builtin.set_fact:
+        arch_install_luks_passphrase: "{{ arch_install_luks_prompt1.user_input }}"
+      no_log: true

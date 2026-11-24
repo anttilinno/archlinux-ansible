@@ -4,20 +4,67 @@
   register: arch_install_root_partuuid
   changed_when: false
   check_mode: false
-  when: arch_install_boot_mode == 'bios'
+  when:
+    - arch_install_boot_mode == 'bios'
+    - not arch_install_encrypt | bool
 
 - name: Get PARTUUID of root partition (UEFI)
   ansible.builtin.command: blkid -s PARTUUID -o value {{ arch_install_part_prefix }}3
   register: arch_install_root_partuuid_uefi
   changed_when: false
   check_mode: false
-  when: arch_install_boot_mode == 'uefi'
+  when:
+    - arch_install_boot_mode == 'uefi'
+    - not arch_install_encrypt | bool
 
 - name: Set root PARTUUID fact
   ansible.builtin.set_fact:
     arch_install_root_partuuid_final: >-
       {{ arch_install_root_partuuid.stdout
          | default(arch_install_root_partuuid_uefi.stdout) }}
+  when: not arch_install_encrypt | bool
+
+- name: Get LUKS UUID of root container
+  ansible.builtin.command: blkid -s UUID -o value {{ arch_install_part_prefix }}2
+  register: arch_install_luks_uuid
+  changed_when: false
+  check_mode: false
+  when: arch_install_encrypt | bool
+
+# mkinitcpio's default HOOKS are systemd-based, so sd-encrypt + rd.luks.name
+- name: Set kernel root arguments
+  ansible.builtin.set_fact:
+    arch_install_root_cmdline: >-
+      {{ ('rd.luks.name=' ~ arch_install_luks_uuid.stdout ~ '=root root=/dev/mapper/root')
+         if arch_install_encrypt | bool
+         else ('root=PARTUUID=' ~ arch_install_root_partuuid_final) }} rw
+      {{- ' quiet splash' if arch_install_plymouth | bool else '' }}
+
+- name: Add sd-encrypt hook to mkinitcpio (LUKS root)
+  ansible.builtin.replace:
+    path: /mnt/etc/mkinitcpio.conf
+    regexp: '^(HOOKS=\(.*\bblock)\s+filesystems'
+    replace: '\1 sd-encrypt filesystems'
+  when: arch_install_encrypt | bool
+
+- name: Fail if mkinitcpio is not systemd-based (LUKS root)
+  ansible.builtin.command: grep -Eq '^HOOKS=\(.*\bsystemd\b.*\bsd-encrypt\b' /mnt/etc/mkinitcpio.conf
+  changed_when: false
+  when: arch_install_encrypt | bool
+
+# Plymouth must sit after systemd and before sd-encrypt so it draws the
+# passphrase prompt
+- name: Add plymouth hook to mkinitcpio
+  ansible.builtin.replace:
+    path: /mnt/etc/mkinitcpio.conf
+    regexp: '^(HOOKS=\(.*\bsystemd)(?! plymouth)\s'
+    replace: '\1 plymouth '
+  when: arch_install_plymouth | bool
+
+- name: Set plymouth theme
+  ansible.builtin.command: arch-chroot /mnt plymouth-set-default-theme {{ arch_install_plymouth_theme }}
+  changed_when: true
+  when: arch_install_plymouth | bool
 
 # CPU microcode must be loaded before the initramfs, or updates never apply
 - name: Set microcode image fact
@@ -26,20 +73,20 @@
       {{ 'intel-ucode.img' if arch_install_cpu == 'intel'
          else ('amd-ucode.img' if arch_install_cpu == 'amd' else '') }}
 
-# BIOS: syslinux
+# BIOS without LUKS: syslinux (kernel lives on the ext4 root, which limine can't read)
 - name: Ensure /boot/syslinux exists (BIOS)
   ansible.builtin.file:
     path: /mnt/boot/syslinux
     state: directory
     mode: '0755'
-  when: arch_install_boot_mode == 'bios'
+  when: arch_install_bootloader == 'syslinux'
 
 - name: Copy syslinux modules to /boot/syslinux (BIOS)
   ansible.builtin.shell: |
     cp /mnt/usr/lib/syslinux/bios/*.c32 /mnt/boot/syslinux/
   args:
     executable: /bin/bash
-  when: arch_install_boot_mode == 'bios'
+  when: arch_install_bootloader == 'syslinux'
   changed_when: true
 
 - name: Create syslinux.cfg (BIOS)
@@ -57,13 +104,13 @@
       LABEL arch
           MENU LABEL Arch Linux
           LINUX ../vmlinuz-linux-lts
-          APPEND root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+          APPEND {{ arch_install_root_cmdline }}
           INITRD {{ ('../' ~ arch_install_ucode_img ~ ',')
                     if arch_install_ucode_img else '' }}../initramfs-linux-lts.img
-  when: arch_install_boot_mode == 'bios'
+  when: arch_install_bootloader == 'syslinux'
   notify: Install syslinux mbr
 
-# UEFI: limine
+# limine: UEFI, and BIOS with LUKS (FAT32 /boot)
 - name: Ensure EFI directories exist (UEFI)
   ansible.builtin.file:
     path: "{{ item }}"
@@ -81,22 +128,55 @@
     mode: '0644'
   when: arch_install_boot_mode == 'uefi'
 
-- name: Create limine.conf (UEFI)
+- name: Copy limine BIOS stage 2 (BIOS)
+  ansible.builtin.copy:
+    src: /mnt/usr/share/limine/limine-bios.sys
+    dest: /mnt/boot/limine-bios.sys
+    remote_src: true
+    mode: '0644'
+  when:
+    - arch_install_bootloader == 'limine'
+    - arch_install_boot_mode == 'bios'
+  notify: Install limine mbr
+
+- name: Copy limine wallpaper
+  ansible.builtin.copy:
+    src: "{{ arch_install_limine_wallpaper }}"
+    dest: /mnt/boot/wallpaper{{ arch_install_limine_wallpaper | splitext | last }}
+    mode: '0644'
+  when:
+    - arch_install_bootloader == 'limine'
+    - arch_install_limine_wallpaper | length > 0
+
+- name: Create limine.conf
   ansible.builtin.copy:
     dest: /mnt/boot/limine.conf
     mode: '0644'
     content: |
       timeout: 3
+      interface_branding: Arch Linux - {{ arch_install_hostname }}
+      interface_branding_colour: 89b4fa
+      interface_help_hidden: yes
+      term_palette: 1e1e2e;f38ba8;a6e3a1;f9e2af;89b4fa;f5c2e7;94e2d5;bac2de
+      term_palette_bright: 585b70;f38ba8;a6e3a1;f9e2af;89b4fa;f5c2e7;94e2d5;a6adc8
+      term_foreground: cdd6f4
+      term_margin_gradient: 20
+      {% if arch_install_limine_wallpaper %}
+      wallpaper: boot():/wallpaper{{ arch_install_limine_wallpaper | splitext | last }}
+      term_background: 801e1e2e
+      {% else %}
+      term_background: 001e1e2e
+      {% endif %}
 
       /Arch Linux
           protocol: linux
           kernel_path: boot():/vmlinuz-linux-lts
-          cmdline: root=PARTUUID={{ arch_install_root_partuuid_final }} rw
+          cmdline: {{ arch_install_root_cmdline }}
       {% if arch_install_ucode_img %}
           module_path: boot():/{{ arch_install_ucode_img }}
       {% endif %}
           module_path: boot():/initramfs-linux-lts.img
-  when: arch_install_boot_mode == 'uefi'
+  when: arch_install_bootloader == 'limine'
 
 - name: Rebuild initramfs
   ansible.builtin.command: arch-chroot /mnt mkinitcpio -P

@@ -1,0 +1,66 @@
+---
+# Encrypted layout, both boot modes:
+#   p1  /boot  FAT32 (limine only reads FAT), unencrypted; ESP on UEFI
+#   p2  LUKS2 -> /dev/mapper/root, ext4; swap is /swapfile inside it
+- name: Encrypted partitioning block
+  tags:
+    - partitioning
+  vars:
+    arch_install_uefi: "{{ arch_install_boot_mode == 'uefi' }}"
+  block:
+    - name: Unmount and close anything on the disk
+      ansible.builtin.shell: |
+        swapoff -a 2>/dev/null || true
+        umount -R /mnt 2>/dev/null || true
+        umount {{ arch_install_disk }}* 2>/dev/null || true
+        cryptsetup close root 2>/dev/null || true
+        dmsetup remove_all 2>/dev/null || true
+      changed_when: false
+      failed_when: false
+
+    - name: Wipe disk and create /boot + LUKS partitions
+      ansible.builtin.shell: |
+        set -euo pipefail
+        disk={{ arch_install_disk }}
+        sgdisk --zap-all "$disk" 2>/dev/null || true
+        wipefs -af "$disk"
+        parted -s "$disk" mklabel {{ 'gpt' if arch_install_uefi | bool else 'msdos' }}
+        parted -s "$disk" mkpart primary fat32 1MiB {{ arch_install_efi_size }}
+        parted -s "$disk" set 1 {{ 'esp' if arch_install_uefi | bool else 'boot' }} on
+        parted -s "$disk" mkpart primary {{ arch_install_efi_size }} 100%
+        partprobe "$disk"
+        udevadm settle
+      args:
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Format /boot
+      ansible.builtin.command: mkfs.fat -F 32 -n BOOT {{ arch_install_part_prefix }}1
+      changed_when: true
+
+    - name: Create LUKS2 container
+      ansible.builtin.command: >-
+        cryptsetup luksFormat --type luks2 --batch-mode --key-file=-
+        {{ arch_install_part_prefix }}2
+      args:
+        stdin: "{{ arch_install_luks_passphrase }}"
+        stdin_add_newline: false
+      changed_when: true
+      no_log: true
+
+    - name: Open LUKS container
+      ansible.builtin.command: cryptsetup open --key-file=- {{ arch_install_part_prefix }}2 root
+      args:
+        stdin: "{{ arch_install_luks_passphrase }}"
+        stdin_add_newline: false
+      changed_when: true
+      no_log: true
+
+    - name: Create ext4 root filesystem in LUKS container
+      ansible.builtin.command: mkfs.ext4 -F -L {{ arch_install_root_fs_label }} /dev/mapper/root
+      changed_when: true
+
+  rescue:
+    - name: Partitioning failed
+      ansible.builtin.fail:
+        msg: "Encrypted partitioning failed. Check disk {{ arch_install_disk }} status and permissions."

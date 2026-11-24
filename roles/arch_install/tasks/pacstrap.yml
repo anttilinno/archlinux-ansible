@@ -10,7 +10,10 @@
         pacstrap -K /mnt {{ (arch_install_base_packages
                              + arch_install_cpu_packages[arch_install_cpu]
                              + arch_install_gpu_packages[arch_install_gpu]
-                             + arch_install_boot_packages[arch_install_boot_mode]
+                             + arch_install_boot_packages['bios_luks' if arch_install_bootloader == 'limine'
+                                                          and arch_install_boot_mode == 'bios'
+                                                          else arch_install_boot_mode]
+                             + (arch_install_plymouth | bool | ternary(['plymouth'], []))
                              + (arch_install_wifi | bool | ternary(arch_install_wifi_packages, [])))
                             | unique | join(' ') }}
       args:
@@ -28,6 +31,12 @@
         executable: /bin/bash
       when: not arch_install_already_installed.stat.exists
       changed_when: true
+
+    - name: Add swapfile to fstab (LUKS root)
+      ansible.builtin.lineinfile:
+        path: /mnt/etc/fstab
+        line: /swapfile none swap defaults 0 0
+      when: arch_install_encrypt | bool
 
   rescue:
     - name: Pacstrap failed

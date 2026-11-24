@@ -42,9 +42,9 @@ Inventory files (`hosts.ini`, `group_vars/*.yml`, `host_vars/*.yml`) are gitigno
 ### Roles
 Stage 0 runs `arch_install` alone. Stage 1 (`site.yml`) runs the rest in this order: common, laptop, wayland, tablet, esp32, print, gaming, ollama, kodi. Each is gated by its own `*_enabled` variables.
 
-- **arch_install**: Complete Arch installation (partitioning, pacstrap, bootloader). Supports BIOS/UEFI, Intel/AMD CPUs, Intel/AMD/NVIDIA GPUs.
+- **arch_install**: Complete Arch installation (partitioning, pacstrap, bootloader). Supports BIOS/UEFI, Intel/AMD CPUs, Intel/AMD/NVIDIA GPUs. `arch_install_encrypt` gives a LUKS2 root (passphrase prompted at install, or `arch_install_luks_passphrase` via `-e @file`): p1 unencrypted FAT32 `/boot`, p2 LUKS, swap as `/swapfile` inside root, `sd-encrypt` + `rd.luks.name=`. Bootloader is limine everywhere except unencrypted BIOS installs, which keep syslinux — limine only reads FAT, and there the kernel sits on the ext4 root. `arch_install_plymouth` adds a splash (it also draws the LUKS prompt); `arch_install_limine_wallpaper` is a controller-side image copied to `/boot`.
 - **common**: Package groups and services. Each group is toggleable via `common_*_enabled` variables in `inventories/provision/group_vars/all.yml`. Also bootstraps `yay`, which every other role's AUR tasks depend on.
-- **laptop**: Battery charge limiting via sysfs (`laptop_battery_charge_limit_enabled`, `laptop_battery`, default `BAT0`). Off by default.
+- **laptop**: Battery charge limiting via sysfs (`laptop_battery_charge_limit_enabled`, `laptop_battery`, default `BAT0`). `laptop_nvidia_blacklist_enabled` blacklists nouveau/nvidia, rebuilds the initramfs (the `kms` hook pulls nouveau in) and lets the driverless dGPU runtime-suspend — for Optimus laptops with pre-Turing cards `nvidia-open` can't drive. All off by default.
 - **wayland**: Wayland compositor (niri) and utilities. Each group is toggleable via `wayland_*_enabled` variables.
 - **tablet**: OpenTabletDriver for Huion/UGEE graphics tablets and keydials (KD100, HS610, …). Off by default. See the notes below — two non-obvious workarounds live here.
 - **esp32**: arduino-cli, python-pyserial, udisks2 + serial group membership for `esp32_user`. On by default.
@@ -89,7 +89,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `wayland_bar_enabled`: waybar
 - `wayland_utils_enabled`: fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd, swaylock
 - `wayland_zathura_enabled`: zathura + zathura-pdf-poppler (keyboard-driven PDF viewer), xournalpp (PDF annotation / handwritten notes), krita (digital painting). Poppler not mupdf: `zathura-pdf-mupdf` pulls libmupdf → tesseract → the virtual `tessdata`, which has 128 providers, so `--noconfirm` silently installs tesseract-data-afr. Group defaults to true and now pulls ~200 MB of krita, so `retro_laptops.yml.example` disables it.
-- `wayland_dms_enabled`: (default on) Dank Material Shell (Quickshell-based desktop shell) + deps (pacman: quickshell, dgop, cava, ddcutil, cliphist, etc.; AUR: dms-shell-git, matugen-bin, ttf-material-symbols-variable-git); enables `dms.service` via `systemctl --global`
+- `wayland_dms_enabled`: (default on) Dank Material Shell (Quickshell-based desktop shell) + deps (pacman: dux-shell — DMS renamed, still ships `dms.service` — quickshell, dgop, cava, ddcutil, cliphist, etc.; AUR: matugen-bin, ttf-material-symbols-variable-git); enables `dms.service` via `systemctl --global`
 - `wayland_autologin_enabled`: auto-start niri on tty1 via getty autologin, written to both `.bash_profile` and `.zprofile` (user: `wayland_autologin_user`)
 
 ### Variable Precedence

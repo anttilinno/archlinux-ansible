@@ -22,13 +22,10 @@
     executable: /bin/bash
   changed_when: true
 
-# Fire-and-forget reboot so Ansible doesn't wait for the ISO host to return
+# Reboot from a transient timer so it outlives this SSH session; the old
+# async "sleep 2 && systemctl reboot" died with the session and never fired.
 - name: Reboot into fresh Arch install (fire-and-forget)
-  ansible.builtin.shell: "sleep 2 && systemctl reboot"
-  async: 1
-  poll: 0
-  # The host goes down mid-command, so any result is expected and meaningless.
-  failed_when: false
+  ansible.builtin.command: systemd-run --on-active=2 systemctl reboot
   changed_when: true
   when: arch_install_perform_reboot | bool
 
