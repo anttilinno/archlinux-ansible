@@ -67,6 +67,15 @@ wayland_dms_aur_packages:
   - matugen-bin
   - ttf-material-symbols-variable-git
 
+# Keys merged into DMS's session state (~/.local/state/dms/session.json), which
+# holds what settings.json doesn't: wallpaper, weather location. DMS watches the
+# file, so a running shell picks changes up. Example:
+#   wallpaperPath: /home/me/Pictures/wall.png
+#   weatherLocation: Tallinn, Estonia
+#   weatherCoordinates: "59.4370,24.7536"   # also set useAutoLocation false in settings.json
+wayland_dms_session: {}
+wayland_dms_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+
 # Autologin and start niri on tty1
 wayland_autologin_enabled: false
 wayland_autologin_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"

@@ -52,6 +52,46 @@
   when: wayland_dms_enabled | bool
   tags: [wayland, dms]
 
+- name: DMS session state block
+  when:
+    - wayland_dms_enabled | bool
+    - wayland_dms_session | length > 0
+  tags: [wayland, dms]
+  become: true
+  become_user: "{{ wayland_dms_user }}"
+  vars:
+    wayland_dms_session_file: "{{ wayland_dms_home }}/.local/state/dms/session.json"
+  block:
+    - name: Look up DMS user home
+      ansible.builtin.getent:
+        database: passwd
+        key: "{{ wayland_dms_user }}"
+
+    - name: Set DMS user home fact
+      ansible.builtin.set_fact:
+        wayland_dms_home: "{{ getent_passwd[wayland_dms_user][4] }}"
+
+    - name: Read DMS session state
+      ansible.builtin.slurp:
+        src: "{{ wayland_dms_session_file }}"
+      register: wayland_dms_session_current
+      failed_when: false
+
+    - name: Ensure DMS state directory exists
+      ansible.builtin.file:
+        path: "{{ wayland_dms_home }}/.local/state/dms"
+        state: directory
+        mode: "0755"
+
+    # Merge, don't replace: DMS keeps the rest of its UI state in this file
+    - name: Merge DMS session keys
+      ansible.builtin.copy:
+        dest: "{{ wayland_dms_session_file }}"
+        content: >-
+          {{ (wayland_dms_session_current.content | default('e30=') | b64decode | from_json)
+             | combine(wayland_dms_session) | to_nice_json(indent=2) }}
+        mode: "0644"
+
 - name: Create getty@tty1 override directory
   ansible.builtin.file:
     path: /etc/systemd/system/getty@tty1.service.d
