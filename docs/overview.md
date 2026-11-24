@@ -218,7 +218,7 @@ Each group can be toggled independently.
 | `wayland_bar_enabled` | on | waybar |
 | `wayland_utils_enabled` | on | fuzzel, foot, grim, slurp, satty, wl-clipboard, wpaperd, swaylock |
 | `wayland_zathura_enabled` | on | zathura, zathura-pdf-poppler, xournalpp, krita |
-| `wayland_dms_enabled` | on | dux-shell (DMS, renamed), quickshell, dgop, cava, ddcutil, cliphist, qt6ct, wtype, … (+ AUR: matugen-bin, ttf-material-symbols-variable-git) |
+| `wayland_dms_enabled` | on | dux-shell (DMS, renamed), matugen, ttf-material-symbols-variable, quickshell, dgop, cava, ddcutil, cliphist, qt6ct, wtype, … |
 | `wayland_autologin_enabled` | off | none — configures getty autologin on tty1 |
 
 ### Other roles

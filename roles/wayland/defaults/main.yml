@@ -63,9 +63,14 @@ wayland_dms_packages:
   # DMS was renamed Dux Shell and moved to extra; it still ships dms.service.
   # dms-shell-git is gone from the AUR, and yay exits 0 on a missing package.
   - dux-shell
-wayland_dms_aur_packages:
+  - matugen
+  - ttf-material-symbols-variable
+# Both used to come from the AUR as the builds below; they conflict with the
+# extra packages and are removed first (nothing depends on them by name).
+wayland_dms_replaced_aur_packages:
   - matugen-bin
   - ttf-material-symbols-variable-git
+wayland_dms_aur_packages: []
 
 # Keys merged into DMS's session state (~/.local/state/dms/session.json), which
 # holds what settings.json doesn't: wallpaper, weather location. DMS watches the

@@ -29,6 +29,13 @@
   when: wayland_zathura_enabled | bool
   tags: [packages, zathura, documents]
 
+- name: Remove AUR builds replaced by extra packages
+  community.general.pacman:
+    name: "{{ wayland_dms_replaced_aur_packages }}"
+    state: absent
+  when: wayland_dms_enabled | bool
+  tags: [packages, dms]
+
 - name: Install Dank Material Shell dependencies
   community.general.pacman:
     name: "{{ wayland_dms_packages }}"
