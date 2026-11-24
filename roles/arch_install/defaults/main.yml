@@ -36,8 +36,9 @@ arch_install_encrypt: false
 arch_install_plymouth: false
 arch_install_plymouth_theme: bgrt
 
-# limine menu wallpaper: a PNG/JPEG/BMP on the controller, copied to /boot
-arch_install_limine_wallpaper: ''
+# Boot wallpaper, a PNG on the controller: the limine menu background, and with
+# plymouth on, the background of the splash and LUKS prompt too
+arch_install_boot_wallpaper: ''
 
 # Partition layout (use MiB for consistency)
 arch_install_efi_size: 512MiB  # UEFI ESP, and /boot when arch_install_encrypt

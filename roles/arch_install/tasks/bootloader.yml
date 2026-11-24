@@ -61,8 +61,74 @@
     replace: '\1 plymouth '
   when: arch_install_plymouth | bool
 
+# The stock spinner theme on a full-screen wallpaper: two-step draws
+# background.png from ImageDir when ScaleBackgroundImage is set
+- name: Create plymouth wallpaper theme
+  ansible.builtin.shell: |
+    set -euo pipefail
+    rm -rf /mnt/usr/share/plymouth/themes/wallpaper
+    cp -r /mnt/usr/share/plymouth/themes/spinner /mnt/usr/share/plymouth/themes/wallpaper
+    rm /mnt/usr/share/plymouth/themes/wallpaper/spinner.plymouth
+  args:
+    executable: /bin/bash
+  changed_when: true
+  when:
+    - arch_install_plymouth | bool
+    - arch_install_boot_wallpaper | length > 0
+
+- name: Copy wallpaper into plymouth theme
+  ansible.builtin.copy:
+    src: "{{ arch_install_boot_wallpaper }}"
+    dest: /mnt/usr/share/plymouth/themes/wallpaper/background.png
+    mode: '0644'
+  when:
+    - arch_install_plymouth | bool
+    - arch_install_boot_wallpaper | length > 0
+
+- name: Write plymouth wallpaper theme file
+  ansible.builtin.copy:
+    dest: /mnt/usr/share/plymouth/themes/wallpaper/wallpaper.plymouth
+    mode: '0644'
+    content: |
+      [Plymouth Theme]
+      Name=Wallpaper
+      Description=Spinner over the boot wallpaper
+      ModuleName=two-step
+
+      [two-step]
+      Font=Adwaita Sans 12
+      TitleFont=Adwaita Sans Light 30
+      MonospaceFont=Adwaita Mono 12
+      ImageDir=/usr/share/plymouth/themes/wallpaper
+      ScaleBackgroundImage=true
+      DialogHorizontalAlignment=.5
+      DialogVerticalAlignment=.5
+      TitleHorizontalAlignment=.5
+      TitleVerticalAlignment=.382
+      HorizontalAlignment=.5
+      VerticalAlignment=.85
+      Transition=none
+      TransitionDuration=0.0
+      BackgroundStartColor=0x000000
+      BackgroundEndColor=0x000000
+      MessageBelowAnimation=true
+
+      [boot-up]
+      UseEndAnimation=false
+
+      [shutdown]
+      UseEndAnimation=false
+
+      [reboot]
+      UseEndAnimation=false
+  when:
+    - arch_install_plymouth | bool
+    - arch_install_boot_wallpaper | length > 0
+
 - name: Set plymouth theme
-  ansible.builtin.command: arch-chroot /mnt plymouth-set-default-theme {{ arch_install_plymouth_theme }}
+  ansible.builtin.command: >-
+    arch-chroot /mnt plymouth-set-default-theme
+    {{ 'wallpaper' if arch_install_boot_wallpaper else arch_install_plymouth_theme }}
   changed_when: true
   when: arch_install_plymouth | bool
 
@@ -141,12 +207,12 @@
 
 - name: Copy limine wallpaper
   ansible.builtin.copy:
-    src: "{{ arch_install_limine_wallpaper }}"
-    dest: /mnt/boot/wallpaper{{ arch_install_limine_wallpaper | splitext | last }}
+    src: "{{ arch_install_boot_wallpaper }}"
+    dest: /mnt/boot/wallpaper{{ arch_install_boot_wallpaper | splitext | last }}
     mode: '0644'
   when:
     - arch_install_bootloader == 'limine'
-    - arch_install_limine_wallpaper | length > 0
+    - arch_install_boot_wallpaper | length > 0
 
 - name: Create limine.conf
   ansible.builtin.copy:
@@ -161,8 +227,8 @@
       term_palette_bright: 585b70;f38ba8;a6e3a1;f9e2af;89b4fa;f5c2e7;94e2d5;a6adc8
       term_foreground: cdd6f4
       term_margin_gradient: 20
-      {% if arch_install_limine_wallpaper %}
-      wallpaper: boot():/wallpaper{{ arch_install_limine_wallpaper | splitext | last }}
+      {% if arch_install_boot_wallpaper %}
+      wallpaper: boot():/wallpaper{{ arch_install_boot_wallpaper | splitext | last }}
       term_background: 801e1e2e
       {% else %}
       term_background: 001e1e2e
