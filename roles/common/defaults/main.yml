@@ -64,6 +64,7 @@ common_dev_packages:
   - uv
 common_dev_aur_packages:
   - claude-code
+  - tuios-bin
 
 # Terminal multiplexer
 common_terminal_enabled: true

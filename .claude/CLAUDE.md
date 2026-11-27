@@ -74,7 +74,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `common_filemanager_enabled`: yazi + dependencies
 - `common_terminal_enabled`: tmux
 - `common_fonts_enabled`: JetBrains Mono Nerd, Noto emoji
-- `common_dev_enabled`: stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code)
+- `common_dev_enabled`: stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code, tuios-bin)
 - `common_laptop_enabled`: networkmanager, wpa_supplicant, brightnessctl
 - `common_docker_enabled`: docker, docker-compose
 - `common_devops_enabled`: aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin

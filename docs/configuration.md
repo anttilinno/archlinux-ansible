@@ -76,7 +76,7 @@ Set in `inventories/provision/group_vars/all.yml`. Inventory files are gitignore
 | `common_filemanager_enabled` | `true` | yazi, ffmpeg, 7zip, resvg, imagemagick, chafa |
 | `common_terminal_enabled` | `true` | tmux |
 | `common_fonts_enabled` | `true` | ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols-mono, noto-fonts-emoji |
-| `common_dev_enabled` | `false` | stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code) |
+| `common_dev_enabled` | `false` | stylua, shfmt, luarocks, xh, nodejs, npm, pnpm, atuin, uv (+ AUR: claude-code, tuios-bin) |
 | `common_docker_enabled` | `false` | docker, docker-compose |
 | `common_devops_enabled` | `false` | aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin |
 | `common_audio_enabled` | `false` | pipewire, pipewire-pulse, wireplumber, alsa-utils, pavucontrol |
