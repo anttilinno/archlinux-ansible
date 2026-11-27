@@ -80,7 +80,7 @@ audio=$(ask_yn    "  Audio (pipewire, wireplumber, pavucontrol)" "false")
 bluetooth=$(ask_yn "  Bluetooth (bluez, blueman)" "false")
 i3=$(ask_yn       "  i3 window manager (xorg, i3, polybar, rofi)" "false")
 virt=$(ask_yn     "  Virtualization (qemu, libvirt, virt-manager)" "false")
-office=$(ask_yn   "  Office (audacity, libreoffice, obsidian, slack)" "false")
+office=$(ask_yn   "  Office (audacity, libreoffice, slack)" "false")
 aur=$(ask_yn      "  AUR extras (shellcheck, zen-browser)" "false")
 
 # --- generate files ---
@@ -145,7 +145,7 @@ common_i3_enabled: ${i3}
 # Virtualization (qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf)
 common_virt_enabled: ${virt}
 
-# Office/productivity apps (audacity, libreoffice, obsidian, slack)
+# Office/productivity apps (audacity, libreoffice, slack)
 common_office_enabled: ${office}
 
 # AUR packages (shellcheck-bin, zen-browser-bin)

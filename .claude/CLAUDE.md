@@ -82,7 +82,7 @@ Toggle groups by editing `inventories/provision/group_vars/all.yml`:
 - `common_i3_enabled`: xorg, i3-wm, polybar, rofi, wezterm (+ AUR: xkb-switch, i3lock-color)
 - `common_aur_enabled`: shellcheck-bin, zen-browser
 - `common_virt_enabled`: qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf
-- `common_office_enabled`: audacity, libreoffice, obsidian, slack
+- `common_office_enabled`: audacity, libreoffice, slack
 
 ### Package Groups (wayland role)
 - `wayland_niri_enabled`: niri, xorg-xwayland, xwayland-satellite, xdg-desktop-portal-gnome

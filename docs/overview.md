@@ -205,7 +205,7 @@ Each group can be toggled independently.
 | `common_bluetooth_enabled` | bluez, bluez-utils, blueman |
 | `common_devops_enabled` | aws-cli-v2, kubectl, helm, kubeseal, opentofu-bin |
 | `common_virt_enabled` | qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf |
-| `common_office_enabled` | audacity, libreoffice, obsidian, slack |
+| `common_office_enabled` | audacity, libreoffice, slack |
 | `common_aur_enabled` | shellcheck-bin, zen-browser |
 | `common_keyring_enabled` | gnome-keyring, libsecret (Secret Service) |
 | `common_laptop_enabled` | networkmanager, wpa_supplicant, brightnessctl |

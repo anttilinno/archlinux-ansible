@@ -147,7 +147,6 @@ common_office_packages:
   - meli
   - audacity
   - libreoffice-fresh
-  - obsidian-bin
   - slack-desktop
 
 # Virtualization (QEMU/KVM + libvirt + virt-manager)

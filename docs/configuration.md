@@ -83,7 +83,7 @@ Set in `inventories/provision/group_vars/all.yml`. Inventory files are gitignore
 | `common_bluetooth_enabled` | `false` | bluez, bluez-utils, blueman |
 | `common_i3_enabled` | `false` | xorg-server, xorg-xinit, i3-wm, polybar, rofi, wezterm, xclip, flameshot (+ AUR: xkb-switch, i3lock-color) |
 | `common_virt_enabled` | `false` | qemu-desktop, libvirt, virt-manager, dnsmasq, edk2-ovmf |
-| `common_office_enabled` | `false` | audacity, libreoffice-fresh, obsidian-bin, slack-desktop |
+| `common_office_enabled` | `false` | audacity, libreoffice-fresh, slack-desktop |
 | `common_aur_enabled` | `false` | shellcheck-bin, zen-browser-bin |
 
 ## Task Runner Commands
