@@ -38,8 +38,11 @@ common_audio_enabled: true
 # Bluetooth (bluez, bluez-utils, blueman)
 common_bluetooth_enabled: true
 
-# i3 window manager (xorg, i3-wm, polybar, rofi, wezterm, xclip, flameshot)
-common_i3_enabled: true
+# Laptop (networkmanager, wpa_supplicant, brightnessctl)
+common_laptop_enabled: true
+
+# i3 window manager — disabled, using Wayland (niri) instead
+common_i3_enabled: false
 
 # AUR packages (shellcheck-bin, zen-browser-bin)
 common_aur_enabled: true
@@ -62,12 +65,12 @@ print_scanner_enabled: false
 print_hplip_enabled: false
 print_hplip_plugin_enabled: true
 
-# Gaming - Steam, Heroic (Epic+GOG), Wine, performance tools
-gaming_steam_enabled: true
-gaming_performance_enabled: true
-gaming_wine_enabled: true
+# Gaming - disabled on laptops
+gaming_steam_enabled: false
+gaming_performance_enabled: false
+gaming_wine_enabled: false
 gaming_nvidia_enabled: false
-gaming_aur_enabled: true
+gaming_aur_enabled: false
 
 # Kodi media center (requires i3/Xorg)
 kodi_enabled: false
@@ -76,6 +79,13 @@ kodi_addons_enabled: false
 kodi_aur_enabled: false
 kodi_automount_enabled: false
 kodi_autologin_enabled: false
+
+# Wayland (niri compositor, bar, utils, zathura, DankMaterialShell)
+wayland_niri_enabled: true
+wayland_bar_enabled: true
+wayland_utils_enabled: true
+wayland_zathura_enabled: true
+wayland_dms_enabled: true
 
 # Wayland autologin — auto-start niri on tty1
 wayland_autologin_enabled: false
