@@ -219,7 +219,7 @@
     dest: /mnt/boot/limine.conf
     mode: '0644'
     content: |
-      timeout: 3
+      timeout: 0
       interface_branding: Arch Linux - {{ arch_install_hostname }}
       interface_branding_colour: 89b4fa
       interface_help_hidden: yes
