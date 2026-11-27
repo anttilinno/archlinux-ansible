@@ -1,0 +1,8 @@
+---
+ansible_user: antti
+ansible_become: true
+
+# Cap charge at 80% on both batteries (internal + external)
+laptop_battery_charge_limit_enabled: true
+laptop_battery_charge_limit: 80
+laptop_battery: [BAT0, BAT1]

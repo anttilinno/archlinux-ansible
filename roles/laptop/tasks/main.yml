@@ -1,13 +1,14 @@
 ---
 # laptop role tasks
 
+# laptop_battery may be one name (BAT0) or a list ([BAT0, BAT1])
 - name: Persist battery charge limit (applied at boot via tmpfiles)
   ansible.builtin.copy:
     dest: /etc/tmpfiles.d/battery-charge-threshold.conf
-    content: >-
-      w /sys/class/power_supply/{{ laptop_battery }}/charge_control_end_threshold
-      - - - - {{ laptop_battery_charge_limit }}
-
+    content: |
+      {% for bat in [laptop_battery] | flatten %}
+      w /sys/class/power_supply/{{ bat }}/charge_control_end_threshold - - - - {{ laptop_battery_charge_limit }}
+      {% endfor %}
     mode: "0644"
   when: laptop_battery_charge_limit_enabled | bool
   tags: [laptop, battery]
@@ -15,7 +16,8 @@
 - name: Apply battery charge limit now
   ansible.builtin.shell: >-
     echo {{ laptop_battery_charge_limit }}
-    > /sys/class/power_supply/{{ laptop_battery }}/charge_control_end_threshold
+    > /sys/class/power_supply/{{ item }}/charge_control_end_threshold
+  loop: "{{ [laptop_battery] | flatten }}"
   changed_when: true
   when: laptop_battery_charge_limit_enabled | bool
   tags: [laptop, battery]

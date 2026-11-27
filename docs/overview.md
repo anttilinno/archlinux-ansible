@@ -96,7 +96,7 @@ tasks depend on this having run.
 
 Caps battery charge to preserve longevity on machines that mostly run on AC.
 Writes the sysfs charge threshold (ThinkPad-style). Off by default; set
-`laptop_battery_charge_limit_enabled` and `laptop_battery` (default `BAT0`).
+`laptop_battery_charge_limit_enabled` and `laptop_battery` (default `BAT0`; a list like `[BAT0, BAT1]` caps each battery).
 
 ### wayland
 
