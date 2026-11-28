@@ -129,6 +129,7 @@
     group: "{{ wayland_autologin_user }}"
     mode: "0644"
     marker: "# {mark} ANSIBLE MANAGED - autostart niri"
+    state: "{{ 'present' if wayland_autologin_niri | bool else 'absent' }}"
     block: |
       if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
         exec niri-session -l

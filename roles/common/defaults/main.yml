@@ -117,6 +117,10 @@ common_laptop_packages:
   - networkmanager
   - wpa_supplicant
   - brightnessctl
+# Route over ethernet when plugged in, keep wifi up as fallback (lower metric wins)
+common_laptop_prefer_wired: false
+# Wake on LAN magic packet on every ethernet profile left at NM's default (ethtool to check it)
+common_laptop_wake_on_lan: false
 
 # Bluetooth
 common_bluetooth_enabled: false

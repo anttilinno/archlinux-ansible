@@ -205,6 +205,47 @@
   when: common_laptop_enabled | bool
   tags: [laptop]
 
+- name: Prefer wired over wifi
+  ansible.builtin.copy:
+    dest: /etc/NetworkManager/conf.d/50-prefer-wired.conf
+    content: |
+      [connection-ethernet]
+      match-device=type:ethernet
+      ipv4.route-metric=100
+      ipv6.route-metric=100
+
+      [connection-wifi]
+      match-device=type:wifi
+      ipv4.route-metric=600
+      ipv6.route-metric=600
+    owner: root
+    group: root
+    mode: "0644"
+  when: common_laptop_enabled | bool and common_laptop_prefer_wired | bool
+  notify: Reload NetworkManager
+  tags: [laptop]
+
+- name: Install ethtool for Wake on LAN
+  community.general.pacman:
+    name: ethtool
+    state: present
+  when: common_laptop_enabled | bool and common_laptop_wake_on_lan | bool
+  tags: [packages, laptop]
+
+- name: Enable Wake on LAN
+  ansible.builtin.copy:
+    dest: /etc/NetworkManager/conf.d/50-wake-on-lan.conf
+    content: |
+      [connection-ethernet-wol]
+      match-device=type:ethernet
+      ethernet.wake-on-lan=64
+    owner: root
+    group: root
+    mode: "0644"
+  when: common_laptop_enabled | bool and common_laptop_wake_on_lan | bool
+  notify: Reload NetworkManager
+  tags: [laptop]
+
 - name: Install bluetooth packages
   community.general.pacman:
     name: "{{ common_bluetooth_packages }}"

@@ -84,3 +84,5 @@ wayland_dms_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
 # Autologin and start niri on tty1
 wayland_autologin_enabled: false
 wayland_autologin_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+# false = autologin to a console shell; niri is started by hand
+wayland_autologin_niri: true
